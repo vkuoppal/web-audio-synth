@@ -1,0 +1,19 @@
+.key {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  width: 50px;
+  height: 180px;
+  user-select: none;
+
+  &.flat {
+    background-color: white;
+  }
+
+  &.sharp {
+    width: 30px;
+    height: 100px;
+    position: relative;
+    margin: 0px -15px;
+    background-color: black;
+  }
+}
