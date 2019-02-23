@@ -1,0 +1,11 @@
+@import "./../../constants/color-palette";
+
+.param-text {
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+  color: $salmon;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+  text-transform: uppercase;
+}
