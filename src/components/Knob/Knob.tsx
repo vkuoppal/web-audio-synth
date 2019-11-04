@@ -10,11 +10,13 @@ import { ParamText } from "./../ParamText/ParamText";
 
 export interface KnobProps {
   name: string;
+  initialValue: number;
   onValueChanged: (value: number) => void;
 }
 
 export interface KnobState {
   value: number;
+  isActive: boolean;
 }
 
 function resolveQuarter(x: number, y: number): number {
@@ -31,10 +33,11 @@ function resolveQuarter(x: number, y: number): number {
 
 export class Knob extends React.Component<KnobProps, KnobState> {
   private origo: { x: number; y: number };
+
   constructor(props: KnobProps) {
     super(props);
     this.origo = { x: 0, y: 0 };
-    this.state = { value: 0 };
+    this.state = { value: props.initialValue, isActive: false };
   }
 
   refCallback = (element: HTMLElement | null) => {
@@ -48,11 +51,15 @@ export class Knob extends React.Component<KnobProps, KnobState> {
     };
   };
 
-  onTouchMove = (event: any) => {
+  onTouchStart = () => {
+    this.setState({ isActive: true });
+  };
+
+  onTouchMove = (event: React.TouchEvent) => {
     const { touches } = event;
     let targetTouch;
     for (let i = 0; i < touches.length; i++) {
-      if (touches[i].target.classList.contains(this.props.name)) {
+      if ((touches[i].target as HTMLElement).classList.contains(this.props.name)) {
         targetTouch = touches[i];
       }
     }
@@ -108,18 +115,27 @@ export class Knob extends React.Component<KnobProps, KnobState> {
     this.props.onValueChanged(knobValue);
   };
 
+  onTouchEnd = () => {
+    this.setState({ isActive: false });
+  };
+
   render() {
     const transformValue = this.state.value;
     const styles = {
       transform: `rotate(${transformValue * 2}deg)`
     };
     const knobPointerName = `knob-pointer-container ${this.props.name}`;
+
+    const knobClass = `knob ${this.state.isActive ? "active" : ""}`;
+
     return (
-      <div>
+      <div className="knob-container">
         <div
-          className="knob"
+          className={knobClass}
           ref={this.refCallback}
+          onTouchStart={this.onTouchStart}
           onTouchMove={this.onTouchMove}
+          onTouchEnd={this.onTouchEnd}
         >
           <div className={knobPointerName} style={styles}>
             <div className="knob-pointer" />

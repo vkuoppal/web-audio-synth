@@ -1,4 +1,8 @@
 .synth-container {
+  &:focus {
+    outline: none;
+  }
+
   display: flex;
   flex-direction: column;
 

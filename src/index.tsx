@@ -5,7 +5,9 @@ import "./index.scss";
 import { Provider } from "react-redux";
 import App from "./App";
 
-import store from "../src/store/index";
+import store from "./store/index";
+
+import { connectExternalMidiDevice } from "./midi/midi-api";
 
 // Prevent context menu event
 document.addEventListener("contextmenu", event => event.preventDefault());
@@ -13,8 +15,8 @@ document.addEventListener("contextmenu", event => event.preventDefault());
 // Prevent default touch gestures
 document.addEventListener(
   "touchstart",
-  event => {
-    if (event.target.tagName !== "INPUT") {
+  (event: any) => {
+    if (event.target !== null && event.target.tagName !== "INPUT") {
       event.preventDefault();
     }
   },
@@ -22,6 +24,8 @@ document.addEventListener(
     passive: false
   }
 );
+
+connectExternalMidiDevice();
 
 ReactDOM.render(
   <Provider store={store}>

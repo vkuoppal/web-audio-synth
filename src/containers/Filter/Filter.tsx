@@ -4,7 +4,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { changeFilter } from "../../actions/index";
 import { Knob } from "../../components/Knob/Knob";
-import { number } from "prop-types";
 
 function mapDispatchToProps(dispatch: Function) {
   return {
@@ -45,8 +44,16 @@ export class ConnectedFilter extends React.Component<FilterProps, FilterState> {
   render() {
     return (
       <div className="filter-container">
-        <Knob name="cutoff" onValueChanged={this.onCutoffValueChanged} />
-        <Knob name="resonance" onValueChanged={this.onResonanceValueChanged} />
+        <Knob
+          name="cutoff"
+          initialValue={this.state.cutoff}
+          onValueChanged={this.onCutoffValueChanged}
+        />
+        <Knob
+          name="resonance"
+          initialValue={this.state.resonance}
+          onValueChanged={this.onResonanceValueChanged}
+        />
       </div>
     );
   }

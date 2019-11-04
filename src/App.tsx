@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Synth } from './containers/Synth/Synth';
+import React, { Component } from "react";
+import { Synth } from "./containers/Synth/Synth";
 
 class App extends Component {
   render() {

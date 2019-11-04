@@ -49,6 +49,7 @@ class AudioPlayer {
   private audioContext: AudioContext;
   private oscillators: Map<string, any> = new Map();
   private keyToFrequency: Map<string, number> = new Map();
+  private oscilloscopeOff = true;
 
   constructor() {
     const A4 = 440;
@@ -95,6 +96,10 @@ class AudioPlayer {
   }
 
   playNote(params: PlayParams) {
+    if (this.noteActive(params.note, params.octave)) {
+      return;
+    }
+
     const gainNode = this.audioContext.createGain();
     const oscillator = this.audioContext.createOscillator();
     const cutoffFilter = this.audioContext.createBiquadFilter();
@@ -108,7 +113,11 @@ class AudioPlayer {
       cutoffFilter.frequency.value
     );
 
-    oscillator.type = "square";
+    const oscillatorType = store.getState().oscillatorType;
+
+    if (oscillatorType !== "custom") {
+      oscillator.type = oscillatorType as OscillatorType;
+    }
     const { note, octave } = params;
     const frequency = this.convertNoteToFrequency(note, octave);
     oscillator.frequency.setValueAtTime(
@@ -153,12 +162,19 @@ class AudioPlayer {
       resonanceFilter
     });
 
-    drawOscilloscope(analyser);
+    if (this.oscilloscopeOff) {
+      drawOscilloscope(analyser);
+      this.oscilloscopeOff = false;
+    }
   }
 
   muteNote(params: MuteParams) {
     const { note, octave } = params;
     const oscToMute = this.oscillators.get(`${note}${octave}`);
+    if (!oscToMute) {
+      return;
+    }
+
     const muteTime = this.audioContext.currentTime;
     oscToMute.gainNode.gain.cancelScheduledValues(oscToMute.startTime);
 
@@ -173,6 +189,10 @@ class AudioPlayer {
 
   private convertNoteToFrequency(note: Note, octave: number) {
     return this.keyToFrequency.get(`${note}${octave}`) as number;
+  }
+
+  private noteActive(note: Note, octave: number) {
+    return this.oscillators.get(`${note}${octave}`) !== undefined;
   }
 }
 

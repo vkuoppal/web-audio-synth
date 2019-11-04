@@ -22,10 +22,7 @@ function mapDispatchToProps(dispatch: Function) {
   };
 }
 
-export class ConnectedEnvelope extends React.Component<
-  EnvelopeProps,
-  EnvelopeState
-> {
+class ConnectedEnvelope extends React.Component<EnvelopeProps, EnvelopeState> {
   constructor(props: EnvelopeProps) {
     super(props);
     this.state = {
@@ -56,10 +53,26 @@ export class ConnectedEnvelope extends React.Component<
   render() {
     return (
       <div className="envelope-container">
-        <Knob name="attack" onValueChanged={this.onAttackValueChanged} />
-        <Knob name="decay" onValueChanged={this.onDecayValueChanged} />
-        <Knob name="sustain" onValueChanged={this.onSustainValueChanged} />
-        <Knob name="release" onValueChanged={this.onReleaseValueChanged} />
+        <Knob
+          name="attack"
+          initialValue={this.state.attack}
+          onValueChanged={this.onAttackValueChanged}
+        />
+        <Knob
+          name="decay"
+          initialValue={this.state.decay}
+          onValueChanged={this.onDecayValueChanged}
+        />
+        <Knob
+          name="sustain"
+          initialValue={this.state.sustain}
+          onValueChanged={this.onSustainValueChanged}
+        />
+        <Knob
+          name="release"
+          initialValue={this.state.release}
+          onValueChanged={this.onReleaseValueChanged}
+        />
       </div>
     );
   }
