@@ -3,6 +3,8 @@ import {
   CHANGE_ADSR,
   CHANGE_FILTER,
   CHANGE_OSCILLATOR,
+  CHANGE_OSCILLATOR_VOLUME,
+  CHANGE_OSCILLATOR_OCTAVE,
   ACTIVATE_NOTE,
   DEACTIVATE_NOTE
 } from "./action-types";
@@ -21,6 +23,14 @@ export function changeFilter(payload: any) {
 
 export function changeOscillatorType(payload: any) {
   return { type: CHANGE_OSCILLATOR, payload };
+}
+
+export function changeOscillatorVolume(payload: { volume: number, oscillatorId: number }) {
+  return { type: CHANGE_OSCILLATOR_VOLUME, payload };
+}
+
+export function changeOscillatorOctave(payload: { octave: number, oscillatorId: number }) {
+  return { type: CHANGE_OSCILLATOR_OCTAVE, payload };
 }
 
 export function activateNote(payload: any) {

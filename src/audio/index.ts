@@ -3,12 +3,16 @@ import store from "./../store";
 import ADSREnvelope from "adsr-envelope";
 import { convertRelation } from "./utils";
 import { createResonanceFilter } from "./resonance";
-import { drawOscilloscope } from "./oscilloscope";
+import { getOscillatorType, getOscillatorVolume, getOscillatorOctave } from "./../selectors";
 
 export interface PlayParams {
   note: Note;
   octave: number;
   velocity?: number;
+}
+
+export interface OscillatorParams extends PlayParams {
+  oscillatorId: number;
 }
 
 export interface MuteParams {
@@ -100,8 +104,23 @@ class AudioPlayer {
       return;
     }
 
+    this.createOscillator(params, 1);
+    this.createOscillator(params, 2);
+    this.createOscillator(params, 3);
+    this.createOscillator(params, 4);
+  }
+
+  muteNote(params: MuteParams) {
+    this.muteOscillator(params, 1);
+    this.muteOscillator(params, 2);
+    this.muteOscillator(params, 3);
+    this.muteOscillator(params, 4);
+  }
+
+  private createOscillator(params: PlayParams, oscillatorId: number) {
     const gainNode = this.audioContext.createGain();
     const oscillator = this.audioContext.createOscillator();
+
     const cutoffFilter = this.audioContext.createBiquadFilter();
 
     const { cutoff, resonance } = store.getState().filter;
@@ -113,13 +132,14 @@ class AudioPlayer {
       cutoffFilter.frequency.value
     );
 
-    const oscillatorType = store.getState().oscillatorType;
+    const oscillatorType = getOscillatorType(store.getState(), oscillatorId);
 
     if (oscillatorType !== "custom") {
       oscillator.type = oscillatorType as OscillatorType;
     }
     const { note, octave } = params;
-    const frequency = this.convertNoteToFrequency(note, octave);
+    const octaveSetOff = getOscillatorOctave(store.getState(), oscillatorId);
+    const frequency = this.convertNoteToFrequency(note, (octave - 1) + (octaveSetOff - 1));
     oscillator.frequency.setValueAtTime(
       frequency,
       this.audioContext.currentTime
@@ -127,8 +147,15 @@ class AudioPlayer {
 
     const startTime = this.audioContext.currentTime;
 
+    const oscillatorVolume = getOscillatorVolume(store.getState(), oscillatorId);
+    const relationalVolume = convertRelation(oscillatorVolume, 0.04, 0);
+
+    if (relationalVolume === 0) {
+      return;
+    }
+
+    const peakLevel = relationalVolume;
     const adsrValue = store.getState().adsrValue;
-    const peakLevel = 0.04;
     const envelope = new ADSREnvelope({
       attackTime: convertRelation(adsrValue.attack, 4),
       decayTime: convertRelation(adsrValue.decay, 4),
@@ -136,7 +163,7 @@ class AudioPlayer {
       releaseTime: convertRelation(adsrValue.release, 4),
       gateTime: 4,
       releaseCurve: "exp",
-      peakLevel
+      peakLevel,
     });
 
     envelope.gateTime = Infinity;
@@ -146,14 +173,10 @@ class AudioPlayer {
     cutoffFilter.connect(resonanceFilter);
     resonanceFilter.connect(gainNode);
 
-    const analyser = this.audioContext.createAnalyser();
-    analyser.smoothingTimeConstant = 1;
-    analyser.fftSize = 2048;
-    gainNode.connect(analyser);
-    analyser.connect(this.audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
 
     oscillator.start();
-    this.oscillators.set(`${note}${octave}`, {
+    this.oscillators.set(`${note}${octave}${oscillatorId}`, {
       oscillator,
       gainNode,
       startTime,
@@ -161,16 +184,11 @@ class AudioPlayer {
       cutoffFilter,
       resonanceFilter
     });
-
-    if (this.oscilloscopeOff) {
-      drawOscilloscope(analyser);
-      this.oscilloscopeOff = false;
-    }
   }
 
-  muteNote(params: MuteParams) {
+  private muteOscillator(params: MuteParams, oscillatorId: number) {
     const { note, octave } = params;
-    const oscToMute = this.oscillators.get(`${note}${octave}`);
+    const oscToMute = this.oscillators.get(`${note}${octave}${oscillatorId}`);
     if (!oscToMute) {
       return;
     }
@@ -184,7 +202,7 @@ class AudioPlayer {
     oscToMute.oscillator.stop(
       oscToMute.startTime + oscToMute.envelope.duration
     );
-    this.oscillators.delete(`${note}${octave}`);
+    this.oscillators.delete(`${note}${octave}${oscillatorId}`);
   }
 
   private convertNoteToFrequency(note: Note, octave: number) {

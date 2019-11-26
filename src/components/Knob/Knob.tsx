@@ -10,6 +10,7 @@ import { ParamText } from "./../ParamText/ParamText";
 
 export interface KnobProps {
   name: string;
+  showName?: boolean;
   initialValue: number;
   onValueChanged: (value: number) => void;
 }
@@ -127,7 +128,7 @@ export class Knob extends React.Component<KnobProps, KnobState> {
     const knobPointerName = `knob-pointer-container ${this.props.name}`;
 
     const knobClass = `knob ${this.state.isActive ? "active" : ""}`;
-
+    const showName = this.props.showName !== undefined ? this.props.showName : true;
     return (
       <div className="knob-container">
         <div
@@ -141,7 +142,8 @@ export class Knob extends React.Component<KnobProps, KnobState> {
             <div className="knob-pointer" />
           </div>
         </div>
-        <ParamText text={this.props.name} />
+
+        {showName && <ParamText text={this.props.name} />}
       </div>
     );
   }

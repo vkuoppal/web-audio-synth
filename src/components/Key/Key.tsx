@@ -37,7 +37,6 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
   onPlayNote = () => {
     const { note, octave } = this.props.note;
     audioPlayer.playNote({ note, octave });
-
     if (this.props.activateNote) {
       this.props.activateNote(
         `${note}${octave}`

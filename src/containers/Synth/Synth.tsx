@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Keybed } from "../../components/Keybed/Keybed";
-import { Slider } from "../../components/Slider/Slider";
 import { OscillatorSwitch } from "../../components/OscillatorSwitch/OscillatorSwitch";
-import { Oscilloscope } from "../../components/Oscilloscope/Oscilloscope";
 import { Envelope } from "./../Envelope/Envelope";
 import { Filter } from "./../Filter/Filter";
 import { playNote, muteNote } from "./../../audio/midi-interface";
@@ -10,6 +8,7 @@ import { playNote, muteNote } from "./../../audio/midi-interface";
 import { connect } from "react-redux";
 
 import "./style.scss";
+import { OscillatorMixerRow } from "../OscillatorMixerRow/OscillatorMixerRow";
 
 enum KeyPressDirection {
   Up = "up",
@@ -106,11 +105,14 @@ class ConnectedSynth extends React.Component<any, any> {
         onKeyUp={event => onKeyPress(event, KeyPressDirection.Up)}
       >
         <div className="main-panel">
-          <Slider name="gain" />
-          <OscillatorSwitch />
+          <div className="oscillator-mixer">
+            <OscillatorMixerRow oscillatorId={1} />
+            <OscillatorMixerRow oscillatorId={2} />
+            <OscillatorMixerRow oscillatorId={3} />
+            <OscillatorMixerRow oscillatorId={4} />
+          </div>
           <Filter />
           <Envelope />
-          <Oscilloscope />
         </div>
         <div className="keybed-container">
           <Keybed />
