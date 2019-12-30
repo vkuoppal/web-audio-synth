@@ -1,18 +1,27 @@
-import store from "./../store";
+import { store } from "../state";
 // @ts-ignore
 import ADSREnvelope from "adsr-envelope";
 import { convertRelation } from "./utils";
 import { createResonanceFilter } from "./resonance";
-import { getOscillatorType, getOscillatorVolume, getOscillatorOctave } from "./../selectors";
+import {
+  getOscillatorType,
+  getOscillatorVolume,
+  getOscillatorOctave,
+  isDelayActive,
+  getDelayFeedback,
+  getDelayTime,
+  getModulationAmount
+} from "../state/selectors";
 
 export interface PlayParams {
   note: Note;
   octave: number;
+  vibrato?: number;
   velocity?: number;
 }
 
 export interface OscillatorParams extends PlayParams {
-  oscillatorId: number;
+  oscillatorId: string;
 }
 
 export interface MuteParams {
@@ -53,11 +62,10 @@ class AudioPlayer {
   private audioContext: AudioContext;
   private oscillators: Map<string, any> = new Map();
   private keyToFrequency: Map<string, number> = new Map();
-  private oscilloscopeOff = true;
 
   constructor() {
     const A4 = 440;
-    const A = [];
+    const A: number[] = [];
     for (let i = -4; i < 4; i++) {
       let a = A4 * Math.pow(2, i);
       A.push(a);
@@ -81,16 +89,15 @@ class AudioPlayer {
     this.audioContext = new AudioContext();
 
     store.subscribe(() => {
-      this.oscillators.forEach(osc => {
-        /*const gainValue = store.getState().gainValue;
-        osc.gainNode.gain.setValueAtTime(
-          gainValue / 150 / (this.oscillators.size + 1),
-          this.audioContext.currentTime
-        );*/
+      this.oscillators.forEach((osc, key) => {
+        let { cutoff, resonance } = store.getState().filter;
+        const note = key.substring(0, key.length - 2);
+        const modulationAmount = getModulationAmount(store.getState(), note, "vibrato");
+        if (modulationAmount) {
+          resonance = Math.abs(resonance + modulationAmount);
+        }
 
-        const { cutoff, resonance } = store.getState().filter;
-
-        osc.cutoffFilter.frequency.value = convertRelation(cutoff, 20000, 100);
+        osc.cutoffFilter.frequency.value = convertRelation(cutoff, 20000, 300);
         osc.resonanceFilter.frequency.value = convertRelation(
           resonance,
           osc.cutoffFilter.frequency.value
@@ -104,20 +111,20 @@ class AudioPlayer {
       return;
     }
 
-    this.createOscillator(params, 1);
-    this.createOscillator(params, 2);
-    this.createOscillator(params, 3);
-    this.createOscillator(params, 4);
+    this.createOscillator(params, "1");
+    this.createOscillator(params, "2");
+    this.createOscillator(params, "3");
+    this.createOscillator(params, "4");
   }
 
   muteNote(params: MuteParams) {
-    this.muteOscillator(params, 1);
-    this.muteOscillator(params, 2);
-    this.muteOscillator(params, 3);
-    this.muteOscillator(params, 4);
+    this.muteOscillator(params, "1");
+    this.muteOscillator(params, "2");
+    this.muteOscillator(params, "3");
+    this.muteOscillator(params, "4");
   }
 
-  private createOscillator(params: PlayParams, oscillatorId: number) {
+  private createOscillator(params: PlayParams, oscillatorId: string) {
     const gainNode = this.audioContext.createGain();
     const oscillator = this.audioContext.createOscillator();
 
@@ -137,6 +144,7 @@ class AudioPlayer {
     if (oscillatorType !== "custom") {
       oscillator.type = oscillatorType as OscillatorType;
     }
+
     const { note, octave } = params;
     const octaveSetOff = getOscillatorOctave(store.getState(), oscillatorId);
     const frequency = this.convertNoteToFrequency(note, (octave - 1) + (octaveSetOff - 1));
@@ -173,10 +181,25 @@ class AudioPlayer {
     cutoffFilter.connect(resonanceFilter);
     resonanceFilter.connect(gainNode);
 
+    const delayOn = isDelayActive(store.getState());
+    if (delayOn) {
+      const delay = this.audioContext.createDelay();
+      delay.delayTime.value = convertRelation(getDelayTime(store.getState()), 0.9);
+
+      const feedback = this.audioContext.createGain();
+      feedback.gain.value = convertRelation(getDelayFeedback(store.getState()), 0.95);
+
+      delay.connect(feedback);
+      feedback.connect(delay);
+
+      gainNode.connect(delay);
+      delay.connect(this.audioContext.destination);
+    }
+
     gainNode.connect(this.audioContext.destination);
 
     oscillator.start();
-    this.oscillators.set(`${note}${octave}${oscillatorId}`, {
+    this.oscillators.set(`${note}${octave}_${oscillatorId}`, {
       oscillator,
       gainNode,
       startTime,
@@ -186,9 +209,9 @@ class AudioPlayer {
     });
   }
 
-  private muteOscillator(params: MuteParams, oscillatorId: number) {
+  private muteOscillator(params: MuteParams, oscillatorId: string) {
     const { note, octave } = params;
-    const oscToMute = this.oscillators.get(`${note}${octave}${oscillatorId}`);
+    const oscToMute = this.oscillators.get(`${note}${octave}_${oscillatorId}`);
     if (!oscToMute) {
       return;
     }
@@ -202,7 +225,7 @@ class AudioPlayer {
     oscToMute.oscillator.stop(
       oscToMute.startTime + oscToMute.envelope.duration
     );
-    this.oscillators.delete(`${note}${octave}${oscillatorId}`);
+    this.oscillators.delete(`${note}${octave}_${oscillatorId}`);
   }
 
   private convertNoteToFrequency(note: Note, octave: number) {
@@ -210,7 +233,10 @@ class AudioPlayer {
   }
 
   private noteActive(note: Note, octave: number) {
-    return this.oscillators.get(`${note}${octave}`) !== undefined;
+    return this.oscillators.get(`${note}${octave}_1`) !== undefined
+      && this.oscillators.get(`${note}${octave}_2`) !== undefined
+      && this.oscillators.get(`${note}${octave}_3`) !== undefined
+      && this.oscillators.get(`${note}${octave}_4`) !== undefined;
   }
 }
 

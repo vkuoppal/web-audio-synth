@@ -1,8 +1,6 @@
 import * as React from "react";
 
-import { connect } from "react-redux";
 import "./style.scss";
-import { changeOscillatorType } from "../../actions/index";
 
 import { ReactComponent as SawtoothIcon } from "./saw.svg";
 import { ReactComponent as SineIcon } from "./sine.svg";
@@ -13,53 +11,31 @@ export enum Waveform {
   Square = "square",
   Triangle = "triangle",
   Sine = "sine",
-  Sawtooth = "sawtooth",
+  Sawtooth = "saw",
   Custom = "custom"
 }
 
 export interface OscillatorSwitchProps {
-  waveform: Waveform;
-  oscillatorId: number;
-}
-
-export interface OscillatorSwitchState {
+  oscillatorId: string;
   selectedWaveform: Waveform;
+  onSelectionChanged: (waveform: Waveform) => void;
 }
 
-function mapDispatchToProps(dispatch: Function) {
-  return {
-    changeOscillatorType: (state: OscillatorSwitchState) =>
-      dispatch(changeOscillatorType(state))
-  };
-}
 
-class ConnectedOscillatorSwitch extends React.Component<
-  any,
-  OscillatorSwitchState
+export class OscillatorSwitch extends React.Component<
+  OscillatorSwitchProps
   > {
-  constructor({ }) {
-    super({});
-    this.state = { selectedWaveform: Waveform.Triangle };
-    this.context = null;
-  }
-
-  componentDidUpdate() {
-    this.props.changeOscillatorType({
-      oscillatorType: this.state.selectedWaveform, oscillatorId: this.props.oscillatorId,
-    });
-  }
-
   changeWaveform = () => {
-    const { selectedWaveform } = this.state;
+    const { selectedWaveform } = this.props;
 
     if (selectedWaveform === Waveform.Sine) {
-      this.setState({ selectedWaveform: Waveform.Triangle });
+      this.props.onSelectionChanged(Waveform.Triangle);
     } else if (selectedWaveform === Waveform.Triangle) {
-      this.setState({ selectedWaveform: Waveform.Square });
+      this.props.onSelectionChanged(Waveform.Square);
     } else if (selectedWaveform === Waveform.Square) {
-      this.setState({ selectedWaveform: Waveform.Sawtooth });
+      this.props.onSelectionChanged(Waveform.Sawtooth);
     } else if (selectedWaveform === Waveform.Sawtooth) {
-      this.setState({ selectedWaveform: Waveform.Sine });
+      this.props.onSelectionChanged(Waveform.Sine);
     }
   };
 
@@ -73,7 +49,7 @@ class ConnectedOscillatorSwitch extends React.Component<
   }
 
   private renderWaveform() {
-    switch (this.state.selectedWaveform) {
+    switch (this.props.selectedWaveform) {
       case Waveform.Sawtooth:
         return <SawtoothIcon />;
       case Waveform.Triangle:
@@ -87,8 +63,3 @@ class ConnectedOscillatorSwitch extends React.Component<
     }
   }
 }
-
-export const OscillatorSwitch = connect(
-  null,
-  mapDispatchToProps
-)(ConnectedOscillatorSwitch);

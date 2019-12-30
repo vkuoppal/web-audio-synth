@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Keybed } from "../../components/Keybed/Keybed";
-import { OscillatorSwitch } from "../../components/OscillatorSwitch/OscillatorSwitch";
 import { Envelope } from "./../Envelope/Envelope";
 import { Filter } from "./../Filter/Filter";
+import { Delay } from "./../Delay/Delay";
+import { PresetChanger } from "./../PresetChanger/PresetChanger";
 import { playNote, muteNote } from "./../../audio/midi-interface";
 
 import { connect } from "react-redux";
@@ -111,9 +112,13 @@ class ConnectedSynth extends React.Component<any, any> {
             <OscillatorMixerRow oscillatorId={3} />
             <OscillatorMixerRow oscillatorId={4} />
           </div>
+
           <Filter />
+          <PresetChanger />
           <Envelope />
+          <Delay />
         </div>
+        <div className="bottom-divider" />
         <div className="keybed-container">
           <Keybed />
         </div>

@@ -2,17 +2,14 @@ import "./style.scss";
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { changeFilter } from "../../actions/index";
+import { actions } from "../../state";
+import { getFilter } from "../../state/selectors";
 import { Knob } from "../../components/Knob/Knob";
-
-function mapDispatchToProps(dispatch: Function) {
-  return {
-    changeFilter: (filter: any) => dispatch(changeFilter(filter))
-  };
-}
 
 export interface FilterProps {
   changeFilter: (filter: FilterState) => void;
+  cutoff: number;
+  resonance: number;
 }
 
 export interface FilterState {
@@ -20,25 +17,9 @@ export interface FilterState {
   resonance: number;
 }
 
-export class ConnectedFilter extends React.Component<FilterProps, FilterState> {
+export class ConnectedFilter extends React.Component<FilterProps> {
   constructor(props: FilterProps) {
     super(props);
-    this.state = {
-      cutoff: 127,
-      resonance: 0
-    };
-  }
-
-  onCutoffValueChanged = (value: number) => {
-    this.setState({ cutoff: value });
-  };
-
-  onResonanceValueChanged = (value: number) => {
-    this.setState({ resonance: value });
-  };
-
-  componentDidUpdate() {
-    this.props.changeFilter(this.state);
   }
 
   render() {
@@ -46,20 +27,30 @@ export class ConnectedFilter extends React.Component<FilterProps, FilterState> {
       <div className="filter-container">
         <Knob
           name="cutoff"
-          initialValue={this.state.cutoff}
-          onValueChanged={this.onCutoffValueChanged}
+          value={this.props.cutoff}
+          onValueChanged={(cutoff: number) => this.props.changeFilter({ cutoff, resonance: this.props.resonance })}
         />
         <Knob
           name="resonance"
-          initialValue={this.state.resonance}
-          onValueChanged={this.onResonanceValueChanged}
+          value={this.props.resonance}
+          onValueChanged={(resonance: number) => this.props.changeFilter({ cutoff: this.props.cutoff, resonance })}
         />
       </div>
     );
   }
 }
 
+function mapStateToProps(state) {
+  return getFilter(state);
+}
+
+function mapDispatchToProps(dispatch: Function) {
+  return {
+    changeFilter: (filter: any) => dispatch(actions.changeFilter(filter))
+  };
+}
+
 export const Filter = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ConnectedFilter);

@@ -1,0 +1,130 @@
+@import "./../../constants/color-palette";
+
+
+$border-width: 4px;
+$border-half-width: 2.2px;
+
+.seven-segment-number {
+  height: 40px;
+  width: 22px;
+  position: relative;
+
+  .a, .b, .c, .d, .e, .f, .g {
+    position: absolute;
+    &.active {
+      box-shadow: 0px 0px 5px $salmon;
+    }
+  }
+
+  .a {
+    left: 2px; 
+    height: 0;
+    width: 10px;
+    border-top: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-top: $border-width solid #FF3636;
+    }
+    border-left: $border-width solid transparent;
+    border-right: $border-width solid transparent;
+  }
+ 
+  .b {
+    left: 18px;
+    top: 1px;
+    height: 10px;
+    width: 0;
+    border-right: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-right: $border-width solid #FF3636;
+    }
+    border-top: $border-width solid transparent;
+    border-bottom: $border-width solid transparent;
+  }
+
+  .c {
+    left: 18px;
+    top: 21px;
+    height: 10px;
+    width: 0;
+    border-right: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-right: $border-width solid #FF3636;
+    }
+    
+    border-top: $border-width solid transparent;
+    border-bottom: $border-width solid transparent;
+  }
+
+  .d {
+    position: absolute;
+    top: 36px;
+    left: 2px;
+    height: 0;
+    width: 10px;
+    border-bottom: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-bottom: $border-width solid #FF3636;
+    }
+    border-left: $border-width solid transparent;
+    border-right: $border-width solid transparent;
+  }
+  
+  .e {
+    position: absolute;
+    left: 0;
+    top: 21px;
+    height: 10px;
+    width: 0;
+    border-left: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-left: $border-width solid #FF3636;
+    }
+    border-top: $border-width solid transparent;
+    border-bottom: $border-width solid transparent;
+  }
+  
+  .f {
+    position: absolute;
+    left: 0;
+    top: 1px;
+    height: 10px;
+    width: 0;
+    border-left: $border-width solid rgba(255, 54, 54, 0.35);
+    &.active {
+      border-left: $border-width solid #FF3636;
+    }
+    border-top: $border-width solid transparent;
+    border-bottom: $border-width solid transparent;
+  }
+
+  .g {
+    top: 17.8px;
+    left: 2px;
+
+    .bottom {
+      height: 0;
+      width: 13.5px;
+      border-top: $border-half-width solid rgba(255, 54, 54, 0.35);
+      border-left: $border-half-width solid transparent;
+      border-right: $border-half-width solid transparent;
+    }
+    
+    .top {
+      height: 0;
+      width: 13.5px;
+      border-bottom: $border-half-width solid rgba(255, 54, 54, 0.35);
+      border-left: $border-half-width solid transparent;
+      border-right: $border-half-width solid transparent;
+    }
+
+    &.active {
+      .bottom {
+        border-top: $border-half-width solid #FF3636;
+      }
+
+      .top {
+        border-bottom: $border-half-width solid #FF3636;
+      }
+    }
+  }
+}

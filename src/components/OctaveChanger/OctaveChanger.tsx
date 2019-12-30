@@ -2,28 +2,26 @@ import "./style.scss";
 
 import * as React from "react";
 
-
 export interface OctaveChangerProps {
-  oscillatorId: number;
+  oscillatorId: string;
   onOctaveChanged: (octave: number) => void;
+  activeOctave: number;
 }
 
-export class OctaveChanger extends React.Component<OctaveChangerProps, any> {
+export class OctaveChanger extends React.Component<OctaveChangerProps> {
   constructor(props: OctaveChangerProps) {
     super(props);
-    this.state = { activeOctave: 1 };
   }
 
 
   render() {
-    const activeOctave = `octave-${this.state.activeOctave}-active`;
+    const activeOctave = `octave-${this.props.activeOctave}-active`;
     const containerClassName = `octave-changer-container ${activeOctave}`;
     return (
       <div
         className={containerClassName}
         onTouchStart={() => {
-          const newOctave = this.state.activeOctave < 4 ? this.state.activeOctave + 1 : 1
-          this.setState({ activeOctave: newOctave });
+          const newOctave = this.props.activeOctave < 4 ? this.props.activeOctave + 1 : 1
           this.props.onOctaveChanged(newOctave);
         }}
       >

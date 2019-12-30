@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { changeGain } from "../../actions/index";
+import { actions } from "../../state";
 import "./style.scss";
 
 import * as React from "react";
@@ -11,7 +11,7 @@ interface SliderProps {
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changeGain: (value: number) => dispatch(changeGain(value))
+    changeGain: (value: number) => dispatch(actions.changeGain(value))
   };
 }
 

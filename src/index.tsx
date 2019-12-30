@@ -5,7 +5,7 @@ import "./index.scss";
 import { Provider } from "react-redux";
 import App from "./App";
 
-import store from "./store/index";
+import { store } from "./state/index";
 
 import { connectExternalMidiDevice } from "./midi/midi-api";
 

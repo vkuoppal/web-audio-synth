@@ -11,7 +11,7 @@ import { ParamText } from "./../ParamText/ParamText";
 export interface KnobProps {
   name: string;
   showName?: boolean;
-  initialValue: number;
+  value: number;
   onValueChanged: (value: number) => void;
 }
 
@@ -38,7 +38,7 @@ export class Knob extends React.Component<KnobProps, KnobState> {
   constructor(props: KnobProps) {
     super(props);
     this.origo = { x: 0, y: 0 };
-    this.state = { value: props.initialValue, isActive: false };
+    this.state = { value: props.value, isActive: false };
   }
 
   refCallback = (element: HTMLElement | null) => {
@@ -121,7 +121,7 @@ export class Knob extends React.Component<KnobProps, KnobState> {
   };
 
   render() {
-    const transformValue = this.state.value;
+    const transformValue = this.props.value;
     const styles = {
       transform: `rotate(${transformValue * 2}deg)`
     };

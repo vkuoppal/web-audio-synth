@@ -3,9 +3,22 @@
 .param-text {
   display: flex;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   color: $salmon;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
+  text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+     1px  0   0 #000,
+     1px  1px 0 #000,
+     0    1px 0 #000,
+    -1px  1px 0 #000,
+    -1px  0   0 #000;
   text-transform: uppercase;
+  
+  &.header {
+    color: #C0C1BB;
+    font-weight: 400;
+    font-size: 18px;
+  }
 }

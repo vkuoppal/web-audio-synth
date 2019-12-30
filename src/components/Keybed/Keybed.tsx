@@ -11,18 +11,18 @@ import "./style.scss";
 
 export type Note = {
   note:
-    | "C"
-    | "C#"
-    | "D"
-    | "D#"
-    | "E"
-    | "F"
-    | "F#"
-    | "G"
-    | "G#"
-    | "A"
-    | "A#"
-    | "B";
+  | "C"
+  | "C#"
+  | "D"
+  | "D#"
+  | "E"
+  | "F"
+  | "F#"
+  | "G"
+  | "G#"
+  | "A"
+  | "A#"
+  | "B";
   octave: number;
 };
 
@@ -57,8 +57,8 @@ export const Keybed = () => {
 
   return (
     <div className="keybed">
-      {keys.map(note => (
-        <Key note={note} />
+      {keys.map((note, index) => (
+        <Key key={index} note={note} />
       ))}
     </div>
   );

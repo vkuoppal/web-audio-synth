@@ -1,6 +1,6 @@
 import { audioPlayer, Note } from "./";
-import { activateNote, deactivateNote } from "./../actions";
-import store from "./../store";
+import { actions } from "./../state";
+import { store } from "../state";
 
 export interface PlayMidiParams {
   note: number;
@@ -38,11 +38,11 @@ function calculateNote(midiNote: number) {
 export function playNote(params: PlayMidiParams) {
   const noteToPlay = calculateNote(params.note);
   audioPlayer.playNote(noteToPlay);
-  store.dispatch(activateNote(`${noteToPlay.note}${noteToPlay.octave}`))
+  store.dispatch(actions.activateNote(`${noteToPlay.note}${noteToPlay.octave}`))
 }
 
 export function muteNote(params: MuteMidiParams) {
   const noteToPlay = calculateNote(params.note);
   audioPlayer.muteNote(noteToPlay);
-  store.dispatch(deactivateNote(`${noteToPlay.note}${noteToPlay.octave}`))
+  store.dispatch(actions.deactivateNote(`${noteToPlay.note}${noteToPlay.octave}`))
 }

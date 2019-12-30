@@ -2,52 +2,21 @@ import "./style.scss";
 
 import * as React from "react";
 import { connect } from "react-redux";
-import { changeAdsr } from "../../actions/index";
+import { actions } from "../../state";
 import { Knob } from "../../components/Knob/Knob";
+import { getAdsr } from "../../state/selectors";
 
-export interface EnvelopeState {
+export interface EnvelopeProps {
+  changeAdsr: (state) => void;
   attack: number;
   decay: number;
   sustain: number;
   release: number;
 }
 
-export interface EnvelopeProps {
-  changeAdsr: (state: EnvelopeState) => void;
-}
-
-function mapDispatchToProps(dispatch: Function) {
-  return {
-    changeAdsr: (state: EnvelopeState) => dispatch(changeAdsr(state))
-  };
-}
-
-class ConnectedEnvelope extends React.Component<EnvelopeProps, EnvelopeState> {
+class ConnectedEnvelope extends React.Component<EnvelopeProps> {
   constructor(props: EnvelopeProps) {
     super(props);
-    this.state = {
-      attack: 0,
-      decay: 30,
-      sustain: 30,
-      release: 30
-    };
-  }
-
-  onAttackValueChanged = (value: number) => {
-    this.setState({ attack: value });
-  };
-  onDecayValueChanged = (value: number) => {
-    this.setState({ decay: value });
-  };
-  onSustainValueChanged = (value: number) => {
-    this.setState({ sustain: value });
-  };
-  onReleaseValueChanged = (value: number) => {
-    this.setState({ release: value });
-  };
-
-  componentDidUpdate() {
-    this.props.changeAdsr(this.state);
   }
 
   render() {
@@ -55,30 +24,40 @@ class ConnectedEnvelope extends React.Component<EnvelopeProps, EnvelopeState> {
       <div className="envelope-container">
         <Knob
           name="attack"
-          initialValue={this.state.attack}
-          onValueChanged={this.onAttackValueChanged}
+          value={this.props.attack}
+          onValueChanged={(attack: number) => this.props.changeAdsr({ attack, decay: this.props.decay, sustain: this.props.sustain, release: this.props.release })}
         />
         <Knob
           name="decay"
-          initialValue={this.state.decay}
-          onValueChanged={this.onDecayValueChanged}
+          value={this.props.decay}
+          onValueChanged={(decay: number) => this.props.changeAdsr({ attack: this.props.attack, decay, sustain: this.props.sustain, release: this.props.release })}
         />
         <Knob
           name="sustain"
-          initialValue={this.state.sustain}
-          onValueChanged={this.onSustainValueChanged}
+          value={this.props.sustain}
+          onValueChanged={(sustain: number) => this.props.changeAdsr({ attack: this.props.attack, decay: this.props.decay, sustain, release: this.props.release })}
         />
         <Knob
           name="release"
-          initialValue={this.state.release}
-          onValueChanged={this.onReleaseValueChanged}
+          value={this.props.release}
+          onValueChanged={(release: number) => this.props.changeAdsr({ attack: this.props.attack, decay: this.props.decay, sustain: this.props.sustain, release })}
         />
       </div>
     );
   }
 }
 
+function mapStateToProps(state) {
+  return getAdsr(state);
+}
+
+function mapDispatchToProps(dispatch: Function) {
+  return {
+    changeAdsr: state => dispatch(actions.changeAdsr(state))
+  };
+}
+
 export const Envelope = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ConnectedEnvelope);
