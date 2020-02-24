@@ -28,7 +28,7 @@ class ConnectedOscillatorMixerRow extends React.Component<OscillatorMixerRowProp
     return (
       <div className="oscillator-mixer-row">
         <div className="oscillator-switch-and-octave">
-          <OscillatorSwitch oscillatorId={this.props.oscillatorId}
+          <OscillatorSwitch
             onSelectionChanged={(waveform: Waveform) => this.props.changeOscillatorType(waveform, this.props.oscillatorId)}
             selectedWaveform={this.props.oscillatorType} />
           <OctaveChanger oscillatorId={this.props.oscillatorId} onOctaveChanged={(octave: number) => this.props.changeOctave(octave, this.props.oscillatorId)} activeOctave={this.props.octave} />

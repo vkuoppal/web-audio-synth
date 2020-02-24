@@ -3,6 +3,7 @@
 $knob-size: 60px;
 
 .knob-container {
+  z-index: 100;
   flex-direction: column;
   align-items: center;
   display: flex;

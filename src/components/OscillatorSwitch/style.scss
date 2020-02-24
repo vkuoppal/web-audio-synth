@@ -1,6 +1,7 @@
 @import "./../../constants/color-palette";
 
 .oscillator-switch {
+  z-index: 100;
   width: 63px;
   height: 27px;
   background-color: $blue-1;

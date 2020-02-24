@@ -33,9 +33,56 @@
         "octave": 1
       }
     },
+    "lfo": {
+      "intensity": 0,
+      "speed": 0,
+      "type": "sine"
+    },
     "delayActive": false,
     "delayFeedback": 50,
-    "delayTime": 50
+    "delayTime": 50,
+    "connection": {
+      "lfo1": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "startPoint": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "lfo2": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "startPoint": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "lfo3": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "startPoint": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "lfo4": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "startPoint": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    }
   },
   "2": {
     "gainValue": 50,
@@ -70,6 +117,11 @@
         "volume": 0,
         "octave": 1
       }
+    },
+    "lfo": {
+      "intensity": 0,
+      "speed": 0,
+      "type": "sine"
     },
     "delayActive": true,
     "delayFeedback": 50,
@@ -109,6 +161,11 @@
         "octave": 1
       }
     },
+    "lfo": {
+      "intensity": 0,
+      "speed": 0,
+      "type": "sine"
+    },
     "delayActive": false,
     "delayFeedback": 0,
     "delayTime": 0
@@ -147,6 +204,11 @@
         "octave": 4
       }
     },
+    "lfo": {
+      "intensity": 0,
+      "speed": 0,
+      "type": "sine"
+    },
     "delayActive": true,
     "delayFeedback": 10,
     "delayTime": 30
@@ -184,6 +246,11 @@
         "volume": 30,
         "octave": 4
       }
+    },
+    "lfo": {
+      "intensity": 0,
+      "speed": 0,
+      "type": "sine"
     },
     "delayActive": false,
     "delayFeedback": 50,

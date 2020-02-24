@@ -1,6 +1,7 @@
 @import "./../../constants/color-palette";
 
 .on-off-container {
+  z-index: 100;
   .on-off-button {
     width: 63px;
     height: 27px;

@@ -7,6 +7,9 @@
 import * as React from "react";
 import "./style.scss";
 import { ParamText } from "./../ParamText/ParamText";
+import { actions } from "./../../state";
+import { store } from "./../../state";
+
 
 export interface KnobProps {
   name: string;
@@ -50,6 +53,8 @@ export class Knob extends React.Component<KnobProps, KnobState> {
       x: boundingClientRect.x + boundingClientRect.width / 2,
       y: boundingClientRect.y + boundingClientRect.height / 2
     };
+
+    store.dispatch(actions.setKnobOrigo({ name: this.props.name, origo: this.origo }));
   };
 
   onTouchStart = () => {

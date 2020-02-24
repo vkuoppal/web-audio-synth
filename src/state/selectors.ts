@@ -43,3 +43,31 @@ export const getFilter = (state: State) => {
 export const getModulationAmount = (state: State, note: string, modulation) => {
   return state.noteModulator && state.noteModulator[note] && state.noteModulator[note][modulation];
 }
+
+export const isRandomizing = (state: State) => {
+  return state.randomizing;
+}
+
+export const getLfoIntensity = (state: State) => {
+  return state.lfo.intensity;
+}
+
+export const getLfoSpeed = (state: State) => {
+  return state.lfo.speed;
+}
+
+export const getLfoType = (state: State) => {
+  return state.lfo.type;
+}
+
+export const getConnectionEndPosition = (state: State, connectionId: string) => {
+  return state.connection[connectionId].position;
+}
+
+export const getConnectionStartPosition = (state: State, connectionId: string) => {
+  return state.connection[connectionId].startPoint;
+}
+
+export const getKnobPositions = (state: State) => {
+  return state.knobs;
+}

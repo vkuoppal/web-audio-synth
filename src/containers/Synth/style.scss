@@ -1,8 +1,33 @@
 @import "./../../constants/color-palette";
 
+@keyframes rotateAround {
+  from {
+    transform: rotate3d(0, 0, 0, 0deg);
+  }
+  to {
+    transform: rotate3d(1, 1, 1, -360deg);
+  }
+}
+
 .synth-container {
   &:focus {
     outline: none;
+  }
+
+  &.randomizing {
+    animation-name: rotateAround;
+    animation-timing-function: linear;
+    animation-duration: 0.7s;
+    transform-style: preserve-3d;
+  }
+
+  &.preset-changing {
+    .knob {
+      animation-name: rotateAround;
+      animation-timing-function: linear;
+      animation-duration: 0.7s;
+      transform-style: preserve-3d;
+    }
   }
 
   background-image: linear-gradient($grey, $grey);

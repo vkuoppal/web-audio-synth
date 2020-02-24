@@ -1,6 +1,7 @@
 @import "./../../constants/color-palette";
 
 .octave-changer-container {
+  z-index: 100;
   display: flex;
   flex-direction: row;
   padding: 5px;

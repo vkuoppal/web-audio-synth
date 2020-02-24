@@ -16,7 +16,6 @@ export enum Waveform {
 }
 
 export interface OscillatorSwitchProps {
-  oscillatorId: string;
   selectedWaveform: Waveform;
   onSelectionChanged: (waveform: Waveform) => void;
 }

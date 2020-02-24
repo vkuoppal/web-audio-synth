@@ -1,4 +1,5 @@
 .key {
+  z-index: 99;
   border-left: 1px solid black;
   border-right: 1px solid black;
   width: 50px;
@@ -46,6 +47,7 @@
   }
 
   &.sharp {
+    z-index: 100;
     width: 30px;
     height: 100px;
     position: relative;

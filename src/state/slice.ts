@@ -1,14 +1,21 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchPreset } from "../presets/presetUtil";
+import { fetchPreset, randomPreset } from "../presets/presetUtil";
 import { Waveform } from "../components/OscillatorSwitch/OscillatorSwitch";
 
-export const initialState = { ...fetchPreset(1), noteModulator: {}, activeNotes: new Set(), selectedPreset: 1 } as State;
+export const initialState = {
+  ...fetchPreset(1),
+  noteModulator: {},
+  activeNotes: new Set(),
+  selectedPreset: 1,
+  knobs: {}
+} as State;
 
 export interface State {
   gainValue: number,
   adsrValue: { attack: number, decay: number, sustain: number, release: number },
   filter: { cutoff: number, resonance: number },
+  lfo: { speed: number, intensity: number, type: Waveform }
   noteModulator: { [note: string]: { [modulator: string]: number } } | {},
   oscillator: { [oscillatorId: string]: { type: Waveform, volume: number, octave: number } },
   activeNotes: Set<string>,
@@ -16,6 +23,16 @@ export interface State {
   delayFeedback: number,
   delayTime: number,
   selectedPreset: number,
+  randomizing?: boolean,
+  connection: {
+    [connectionId: string]: {
+      position: { x: number, y: number }
+      startPoint: { x: number, y: number }
+    }
+  }
+  knobs: {
+    [knobName: string]: { origo?: { x: number, y: number } }
+  }
 }
 
 interface AdsrPayloadAction {
@@ -50,6 +67,37 @@ interface ChangeNoteModulatorPayload {
 
 interface StopNoteModulatorPayload {
   note: string;
+}
+
+interface ChangeLfoSpeedPayload {
+  lfoSpeed: number;
+}
+
+interface ChangeLfoIntensityPayload {
+  lfoIntensity: number;
+}
+
+interface ChangeLfoTypePayload {
+  lfoType: Waveform;
+}
+
+interface MoveConnectionPayload {
+  connectionId: string;
+  x: number;
+  y: number;
+}
+
+interface SetConnectionStartPayload {
+  connectionId: string;
+  x: number;
+  y: number;
+}
+
+interface SetKnobOrigoPayload {
+  name: string;
+  origo: {
+    x: number, y: number
+  }
 }
 
 export const applicationSlice = createSlice({
@@ -101,6 +149,20 @@ export const applicationSlice = createSlice({
       state = newState;
       return state;
     },
+    randomizeAll(state) {
+      const prevActiveNotes = new Set(state.activeNotes);
+      const presetToSelect = 99;
+
+      const newState = {
+        connection: { "1": { position: { x: 0, y: 0 }, startPoint: { x: 0, y: 0 } } }, randomizing: true, ...randomPreset(), activeNotes: prevActiveNotes, selectedPreset: presetToSelect, noteModulator: {}
+      };
+      // @ts-ignore
+      state = newState;
+      return state;
+    },
+    randomized(state) {
+      state.randomizing = false;
+    },
     changeNoteModulator(state, action: PayloadAction<ChangeNoteModulatorPayload>) {
       const earlierModulator = state.noteModulator && state.noteModulator[action.payload.note];
       if (earlierModulator) {
@@ -118,6 +180,57 @@ export const applicationSlice = createSlice({
       if (earlierModulator) {
         state.noteModulator[action.payload.note] = {};
       }
+    },
+    changeLfoSpeed(state, action: PayloadAction<ChangeLfoSpeedPayload>) {
+      state.lfo.speed = action.payload.lfoSpeed;
+    },
+
+    changeLfoIntensity(state, action: PayloadAction<ChangeLfoIntensityPayload>) {
+      state.lfo.intensity = action.payload.lfoIntensity;
+    },
+
+    changeLfoType(state, action: PayloadAction<ChangeLfoTypePayload>) {
+      state.lfo.type = action.payload.lfoType;
+    },
+
+    moveConnection(state, action: PayloadAction<MoveConnectionPayload>) {
+      const endX = action.payload.x;
+      const endY = action.payload.y;
+      const knobPositions = state.knobs;
+
+      let endPointCoordinates = { x: endX, y: endY };
+      // Snap to knobs
+      Object.keys(knobPositions).forEach(key => {
+        const { origo } = knobPositions[key];
+        if (origo) {
+          const xDistance =
+            endX > origo.x
+              ? endX - origo.x
+              : origo.x - endX;
+
+          const yDistance =
+            endY > origo.y
+              ? endY - origo.y
+              : origo.y - endY;
+
+          if (yDistance < 32 && xDistance < 32) {
+            endPointCoordinates = origo;
+          }
+        }
+      });
+
+      state.connection[action.payload.connectionId].position = endPointCoordinates;
+    },
+
+    setConnectionStart(state, action: PayloadAction<SetConnectionStartPayload>) {
+      state.connection[action.payload.connectionId].startPoint = { x: action.payload.x, y: action.payload.y };
+    },
+
+    setKnobOrigo(state, action: PayloadAction<SetKnobOrigoPayload>) {
+      if (!state.knobs[action.payload.name]) {
+        state.knobs[action.payload.name] = {};
+      }
+      state.knobs[action.payload.name].origo = action.payload.origo;
     }
   }
 });

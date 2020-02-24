@@ -87,14 +87,27 @@ class AudioPlayer {
     });
 
     this.audioContext = new AudioContext();
+    this.listenToStateChanges();
+  }
 
+  listenToStateChanges() {
     store.subscribe(() => {
       this.oscillators.forEach((osc, key) => {
         let { cutoff, resonance } = store.getState().filter;
         const note = key.substring(0, key.length - 2);
-        const modulationAmount = getModulationAmount(store.getState(), note, "vibrato");
+        const modulationAmount = getModulationAmount(store.getState(), note, "resonance");
         if (modulationAmount) {
           resonance = Math.abs(resonance + modulationAmount);
+        }
+
+        const pitchModulation = getModulationAmount(store.getState(), note, "pitch");
+        if (pitchModulation) {
+          const frequency = osc.originalFrequency - (0.20 * pitchModulation);
+
+          osc.oscillator.frequency.setValueAtTime(
+            frequency,
+            this.audioContext.currentTime
+          );
         }
 
         osc.cutoffFilter.frequency.value = convertRelation(cutoff, 20000, 300);
@@ -140,10 +153,7 @@ class AudioPlayer {
     );
 
     const oscillatorType = getOscillatorType(store.getState(), oscillatorId);
-
-    if (oscillatorType !== "custom") {
-      oscillator.type = oscillatorType as OscillatorType;
-    }
+    oscillator.type = oscillatorType as OscillatorType;
 
     const { note, octave } = params;
     const octaveSetOff = getOscillatorOctave(store.getState(), oscillatorId);
@@ -201,6 +211,7 @@ class AudioPlayer {
     oscillator.start();
     this.oscillators.set(`${note}${octave}_${oscillatorId}`, {
       oscillator,
+      originalFrequency: frequency,
       gainNode,
       startTime,
       envelope,

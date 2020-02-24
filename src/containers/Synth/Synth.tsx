@@ -3,8 +3,11 @@ import { Keybed } from "../../components/Keybed/Keybed";
 import { Envelope } from "./../Envelope/Envelope";
 import { Filter } from "./../Filter/Filter";
 import { Delay } from "./../Delay/Delay";
+import { Lfo } from "./../Lfo/Lfo";
 import { PresetChanger } from "./../PresetChanger/PresetChanger";
 import { playNote, muteNote } from "./../../audio/midi-interface";
+import { actions } from "../../state";
+import { isRandomizing } from "../../state/selectors";
 
 import { connect } from "react-redux";
 
@@ -97,10 +100,14 @@ class ConnectedSynth extends React.Component<any, any> {
   }
 
   render() {
+    const className = this.props.randomizing ? "synth-container randomizing" : "synth-container";
+    if (this.props.randomizing) {
+      window.setTimeout(() => this.props.randomized(), 1000);
+    }
     return (
       <div
         ref={this.synthRef}
-        className="synth-container"
+        className={className}
         tabIndex={0}
         onKeyDown={event => onKeyPress(event, KeyPressDirection.Down)}
         onKeyUp={event => onKeyPress(event, KeyPressDirection.Up)}
@@ -115,6 +122,7 @@ class ConnectedSynth extends React.Component<any, any> {
 
           <Filter />
           <PresetChanger />
+          <Lfo />
           <Envelope />
           <Delay />
         </div>
@@ -127,4 +135,17 @@ class ConnectedSynth extends React.Component<any, any> {
   }
 }
 
-export const Synth = connect()(ConnectedSynth);
+function mapStateToProps(state: any) {
+  return {
+    randomizing: isRandomizing(state),
+  };
+}
+
+function mapDispatchToProps(dispatch: Function) {
+  return {
+    randomized: () => dispatch(actions.randomized()),
+  }
+}
+
+
+export const Synth = connect(mapStateToProps, mapDispatchToProps)(ConnectedSynth);
