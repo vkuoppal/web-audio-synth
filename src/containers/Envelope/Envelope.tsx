@@ -25,22 +25,50 @@ class ConnectedEnvelope extends React.Component<EnvelopeProps> {
         <Knob
           name="attack"
           value={this.props.attack}
-          onValueChanged={(attack: number) => this.props.changeAdsr({ attack, decay: this.props.decay, sustain: this.props.sustain, release: this.props.release })}
+          onValueChanged={(attack: number) =>
+            this.props.changeAdsr({
+              attack,
+              decay: this.props.decay,
+              sustain: this.props.sustain,
+              release: this.props.release,
+            })
+          }
         />
         <Knob
           name="decay"
           value={this.props.decay}
-          onValueChanged={(decay: number) => this.props.changeAdsr({ attack: this.props.attack, decay, sustain: this.props.sustain, release: this.props.release })}
+          onValueChanged={(decay: number) =>
+            this.props.changeAdsr({
+              attack: this.props.attack,
+              decay,
+              sustain: this.props.sustain,
+              release: this.props.release,
+            })
+          }
         />
         <Knob
           name="sustain"
           value={this.props.sustain}
-          onValueChanged={(sustain: number) => this.props.changeAdsr({ attack: this.props.attack, decay: this.props.decay, sustain, release: this.props.release })}
+          onValueChanged={(sustain: number) =>
+            this.props.changeAdsr({
+              attack: this.props.attack,
+              decay: this.props.decay,
+              sustain,
+              release: this.props.release,
+            })
+          }
         />
         <Knob
           name="release"
           value={this.props.release}
-          onValueChanged={(release: number) => this.props.changeAdsr({ attack: this.props.attack, decay: this.props.decay, sustain: this.props.sustain, release })}
+          onValueChanged={(release: number) =>
+            this.props.changeAdsr({
+              attack: this.props.attack,
+              decay: this.props.decay,
+              sustain: this.props.sustain,
+              release,
+            })
+          }
         />
       </div>
     );
@@ -53,7 +81,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changeAdsr: state => dispatch(actions.changeAdsr(state))
+    changeAdsr: (state) => dispatch(actions.changeAdsr(state)),
   };
 }
 

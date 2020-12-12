@@ -11,7 +11,7 @@ interface SliderProps {
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changeGain: (value: number) => dispatch(actions.changeGain(value))
+    changeGain: (value: number) => dispatch(actions.changeGain(value)),
   };
 }
 
@@ -20,7 +20,7 @@ export class ConnectedSlider extends React.Component<SliderProps, any> {
     super(props);
     this.state = {
       value: 50,
-      name: props.name
+      name: props.name,
     };
   }
 
@@ -46,7 +46,4 @@ export class ConnectedSlider extends React.Component<SliderProps, any> {
   }
 }
 
-export const Slider = connect(
-  null,
-  mapDispatchToProps
-)(ConnectedSlider);
+export const Slider = connect(null, mapDispatchToProps)(ConnectedSlider);

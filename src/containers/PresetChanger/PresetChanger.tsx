@@ -24,22 +24,37 @@ export class ConnectedPresetChanger extends React.Component<PresetChangerProps> 
     const presetNumberStr = String(this.props.presetNumber);
 
     return (
-      <div className="preset-changer-container" onTouchStart={() => {
-        this.longPressTimeout = window.setTimeout(() => {
-          this.props.randomizeAll();
-        }, 1000);
-      }}
+      <div
+        className="preset-changer-container"
+        onTouchStart={() => {
+          this.longPressTimeout = window.setTimeout(() => {
+            this.props.randomizeAll();
+          }, 1000);
+        }}
         onTouchEnd={() => {
           if (this.props.presetNumber !== 99) {
             this.props.changePreset(this.props.presetNumber + 1);
           }
 
           window.clearTimeout(this.longPressTimeout);
-        }}>
+        }}
+      >
         <div className="seven-segment-display-container">
           <div className="seven-segment-display">
-            <SevenSegmentNumber number={presetNumberStr.length === 2 ? Number(presetNumberStr[0]) : undefined} />
-            <SevenSegmentNumber number={presetNumberStr.length === 2 ? Number(presetNumberStr[1]) : Number(presetNumberStr[0])} />
+            <SevenSegmentNumber
+              number={
+                presetNumberStr.length === 2
+                  ? Number(presetNumberStr[0])
+                  : undefined
+              }
+            />
+            <SevenSegmentNumber
+              number={
+                presetNumberStr.length === 2
+                  ? Number(presetNumberStr[1])
+                  : Number(presetNumberStr[0])
+              }
+            />
           </div>
         </div>
         <ParamText text="program" />
@@ -50,14 +65,15 @@ export class ConnectedPresetChanger extends React.Component<PresetChangerProps> 
 
 function mapStateToProps(state, ownProps) {
   return {
-    presetNumber: getSelectedPresetNumber(state)
+    presetNumber: getSelectedPresetNumber(state),
   };
 }
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changePreset: (presetNumber: number) => dispatch(actions.changePreset(presetNumber)),
-    randomizeAll: () => dispatch(actions.randomizeAll())
+    changePreset: (presetNumber: number) =>
+      dispatch(actions.changePreset(presetNumber)),
+    randomizeAll: () => dispatch(actions.randomizeAll()),
   };
 }
 

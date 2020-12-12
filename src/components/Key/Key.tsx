@@ -1,9 +1,3 @@
-/**
- *
- * Key.tsx
- *
- */
-
 import "./style.scss";
 
 import * as React from "react";
@@ -21,7 +15,11 @@ export interface IKeyProps {
   active?: boolean;
   activateNote?: (note: string) => void;
   deactivateNote?: (note: string) => void;
-  changeNoteModulator?: (note: string, modulator: string, value: number) => void;
+  changeNoteModulator?: (
+    note: string,
+    modulator: string,
+    value: number
+  ) => void;
   stopNoteModulator?: (note: string) => void;
   modulationAmount?: number;
   pitchModulation?: number;
@@ -55,7 +53,7 @@ function convertXValue(movedX: number) {
     movedValueX = PITCH_AMOUNT;
   } else if (movedValueX >= PITCH_SENSITIVITY) {
     movedValueX = movedValueX - PITCH_SENSITIVITY;
-  } else if (movedValueX <= - PITCH_SENSITIVITY) {
+  } else if (movedValueX <= -PITCH_SENSITIVITY) {
     movedValueX = movedValueX + PITCH_SENSITIVITY;
   }
 
@@ -73,15 +71,17 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
     const { note, octave } = this.props.note;
     audioPlayer.playNote({ note, octave });
     if (this.props.activateNote) {
-      this.props.activateNote(
-        `${note}${octave}`
-      );
+      this.props.activateNote(`${note}${octave}`);
     }
 
     const { touches } = event;
     let targetTouch;
     for (let i = 0; i < touches.length; i++) {
-      if ((touches[i].target as HTMLElement).classList.contains(`${this.props.note.note}${this.props.note.octave}`)) {
+      if (
+        (touches[i].target as HTMLElement).classList.contains(
+          `${this.props.note.note}${this.props.note.octave}`
+        )
+      ) {
         targetTouch = touches[i];
       }
     }
@@ -93,15 +93,13 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
     const currentY = targetTouch.pageY;
     const currentX = targetTouch.pageX;
     this.touchStartCoordinates = { x: currentX, y: currentY };
-  }
+  };
 
   onMuteNote = () => {
     const { note, octave } = this.props.note;
     audioPlayer.muteNote({ note, octave });
     if (this.props.deactivateNote) {
-      this.props.deactivateNote(
-        `${note}${octave}`
-      );
+      this.props.deactivateNote(`${note}${octave}`);
     }
     if (this.props.stopNoteModulator) {
       this.props.stopNoteModulator(`${note}${octave}`);
@@ -113,7 +111,11 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
       const { touches } = event;
       let targetTouch;
       for (let i = 0; i < touches.length; i++) {
-        if ((touches[i].target as HTMLElement).classList.contains(`${this.props.note.note}${this.props.note.octave}`)) {
+        if (
+          (touches[i].target as HTMLElement).classList.contains(
+            `${this.props.note.note}${this.props.note.octave}`
+          )
+        ) {
           targetTouch = touches[i];
         }
       }
@@ -130,10 +132,14 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
       const movedValueX = convertXValue(movedX);
 
       const { note, octave } = this.props.note;
-      this.props.changeNoteModulator(`${note}${octave}`, "resonance", movedValueY);
+      this.props.changeNoteModulator(
+        `${note}${octave}`,
+        "resonance",
+        movedValueY
+      );
       this.props.changeNoteModulator(`${note}${octave}`, "pitch", movedValueX);
     }
-  }
+  };
 
   render() {
     const { note } = this.props;
@@ -148,8 +154,8 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
       g -= this.props.modulationAmount / 2;
       b -= this.props.modulationAmount / 2;
       style = {
-        background: `linear-gradient(-20deg, rgb(${r}, ${g}, ${b}), white, rgb(${r}, ${g}, ${b})`
-      }
+        background: `linear-gradient(-20deg, rgb(${r}, ${g}, ${b}), white, rgb(${r}, ${g}, ${b})`,
+      };
     }
 
     if (this.props.pitchModulation !== undefined) {
@@ -157,12 +163,14 @@ export class ConnectedKey extends React.Component<IKeyProps, KeyState> {
       style = {
         ...style,
         transform: `rotate(${transformAmount}deg)`,
-      }
+      };
     }
 
     return (
       <div
-        className={`key ${keyClass} ${note.note}${note.octave} ${isActive ? "active" : ""}`}
+        className={`key ${keyClass} ${note.note}${note.octave} ${
+          isActive ? "active" : ""
+        }`}
         style={style}
         onTouchStart={this.onPlayNote}
         onTouchMove={this.onTouchMove}
@@ -176,8 +184,10 @@ function mapDispatchToProps(dispatch: Function) {
   return {
     activateNote: (note: string) => dispatch(actions.activateNote(note)),
     deactivateNote: (note: string) => dispatch(actions.deactivateNote(note)),
-    changeNoteModulator: (note: string, modulator: string, value: number) => dispatch(actions.changeNoteModulator({ note, modulator, value })),
-    stopNoteModulator: (note: string) => dispatch(actions.stopNoteModulator({ note })),
+    changeNoteModulator: (note: string, modulator: string, value: number) =>
+      dispatch(actions.changeNoteModulator({ note, modulator, value })),
+    stopNoteModulator: (note: string) =>
+      dispatch(actions.stopNoteModulator({ note })),
   };
 }
 
@@ -185,12 +195,13 @@ function mapStateToProps(state: any, ownProps: IKeyProps) {
   const { note, octave } = ownProps.note;
   return {
     active: isNoteActive(state, `${note}${octave}`),
-    modulationAmount: getModulationAmount(state, `${note}${octave}`, "resonance"),
-    pitchModulation: getModulationAmount(state, `${note}${octave}`, "pitch")
+    modulationAmount: getModulationAmount(
+      state,
+      `${note}${octave}`,
+      "resonance"
+    ),
+    pitchModulation: getModulationAmount(state, `${note}${octave}`, "pitch"),
   };
 }
 
-export const Key = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedKey);
+export const Key = connect(mapStateToProps, mapDispatchToProps)(ConnectedKey);

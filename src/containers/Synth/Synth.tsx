@@ -16,7 +16,7 @@ import { OscillatorMixerRow } from "../OscillatorMixerRow/OscillatorMixerRow";
 
 enum KeyPressDirection {
   Up = "up",
-  Down = "down"
+  Down = "down",
 }
 
 function onKeyPress(
@@ -100,7 +100,9 @@ class ConnectedSynth extends React.Component<any, any> {
   }
 
   render() {
-    const className = this.props.randomizing ? "synth-container randomizing" : "synth-container";
+    const className = this.props.randomizing
+      ? "synth-container randomizing"
+      : "synth-container";
     if (this.props.randomizing) {
       window.setTimeout(() => this.props.randomized(), 1000);
     }
@@ -109,8 +111,8 @@ class ConnectedSynth extends React.Component<any, any> {
         ref={this.synthRef}
         className={className}
         tabIndex={0}
-        onKeyDown={event => onKeyPress(event, KeyPressDirection.Down)}
-        onKeyUp={event => onKeyPress(event, KeyPressDirection.Up)}
+        onKeyDown={(event) => onKeyPress(event, KeyPressDirection.Down)}
+        onKeyUp={(event) => onKeyPress(event, KeyPressDirection.Up)}
       >
         <div className="main-panel">
           <div className="oscillator-mixer">
@@ -144,8 +146,10 @@ function mapStateToProps(state: any) {
 function mapDispatchToProps(dispatch: Function) {
   return {
     randomized: () => dispatch(actions.randomized()),
-  }
+  };
 }
 
-
-export const Synth = connect(mapStateToProps, mapDispatchToProps)(ConnectedSynth);
+export const Synth = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConnectedSynth);

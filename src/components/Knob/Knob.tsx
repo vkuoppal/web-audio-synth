@@ -1,15 +1,8 @@
-/**
- *
- * Knob.tsx
- *
- */
-
 import * as React from "react";
 import "./style.scss";
 import { ParamText } from "./../ParamText/ParamText";
 import { actions } from "./../../state";
 import { store } from "./../../state";
-
 
 export interface KnobProps {
   name: string;
@@ -51,10 +44,12 @@ export class Knob extends React.Component<KnobProps, KnobState> {
     const boundingClientRect = element.getBoundingClientRect() as DOMRect;
     this.origo = {
       x: boundingClientRect.x + boundingClientRect.width / 2,
-      y: boundingClientRect.y + boundingClientRect.height / 2
+      y: boundingClientRect.y + boundingClientRect.height / 2,
     };
 
-    store.dispatch(actions.setKnobOrigo({ name: this.props.name, origo: this.origo }));
+    store.dispatch(
+      actions.setKnobOrigo({ name: this.props.name, origo: this.origo })
+    );
   };
 
   onTouchStart = () => {
@@ -65,7 +60,9 @@ export class Knob extends React.Component<KnobProps, KnobState> {
     const { touches } = event;
     let targetTouch;
     for (let i = 0; i < touches.length; i++) {
-      if ((touches[i].target as HTMLElement).classList.contains(this.props.name)) {
+      if (
+        (touches[i].target as HTMLElement).classList.contains(this.props.name)
+      ) {
         targetTouch = touches[i];
       }
     }
@@ -128,12 +125,13 @@ export class Knob extends React.Component<KnobProps, KnobState> {
   render() {
     const transformValue = this.props.value;
     const styles = {
-      transform: `rotate(${transformValue * 2}deg)`
+      transform: `rotate(${transformValue * 2}deg)`,
     };
     const knobPointerName = `knob-pointer-container ${this.props.name}`;
 
     const knobClass = `knob ${this.state.isActive ? "active" : ""}`;
-    const showName = this.props.showName !== undefined ? this.props.showName : true;
+    const showName =
+      this.props.showName !== undefined ? this.props.showName : true;
     return (
       <div className="knob-container">
         <div

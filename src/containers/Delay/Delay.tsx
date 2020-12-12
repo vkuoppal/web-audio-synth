@@ -3,7 +3,11 @@ import "./style.scss";
 import * as React from "react";
 import { connect } from "react-redux";
 import { actions } from "../../state";
-import { isDelayActive, getDelayTime, getDelayFeedback } from "../../state/selectors";
+import {
+  isDelayActive,
+  getDelayTime,
+  getDelayFeedback,
+} from "../../state/selectors";
 import { Knob } from "../../components/Knob/Knob";
 import { ParamText } from "../../components/ParamText/ParamText";
 import { OnOff } from "../../components/OnOff/OnOff";
@@ -33,12 +37,12 @@ class ConnectedDelay extends React.Component<DelayProps> {
           <Knob
             name="time"
             value={this.props.delayTime}
-            onValueChanged={value => this.props.changeTime(value)}
+            onValueChanged={(value) => this.props.changeTime(value)}
           />
           <Knob
             name="feedback"
             value={this.props.delayFeedback}
-            onValueChanged={value => this.props.changeFeedback(value)}
+            onValueChanged={(value) => this.props.changeFeedback(value)}
           />
         </div>
       </div>
@@ -50,7 +54,8 @@ function mapDispatchToProps(dispatch: Function) {
   return {
     toggleDelay: () => dispatch(actions.toggleDelayActive()),
     changeTime: (time: number) => dispatch(actions.changeDelayTime(time)),
-    changeFeedback: (feedback: number) => dispatch(actions.changeDelayFeedback(feedback))
+    changeFeedback: (feedback: number) =>
+      dispatch(actions.changeDelayFeedback(feedback)),
   };
 }
 
@@ -58,7 +63,7 @@ function mapStateToProps(state) {
   return {
     active: isDelayActive(state),
     delayTime: getDelayTime(state),
-    delayFeedback: getDelayFeedback(state)
+    delayFeedback: getDelayFeedback(state),
   };
 }
 

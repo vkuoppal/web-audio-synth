@@ -28,12 +28,16 @@ export class ConnectedFilter extends React.Component<FilterProps> {
         <Knob
           name="cutoff"
           value={this.props.cutoff}
-          onValueChanged={(cutoff: number) => this.props.changeFilter({ cutoff, resonance: this.props.resonance })}
+          onValueChanged={(cutoff: number) =>
+            this.props.changeFilter({ cutoff, resonance: this.props.resonance })
+          }
         />
         <Knob
           name="resonance"
           value={this.props.resonance}
-          onValueChanged={(resonance: number) => this.props.changeFilter({ cutoff: this.props.cutoff, resonance })}
+          onValueChanged={(resonance: number) =>
+            this.props.changeFilter({ cutoff: this.props.cutoff, resonance })
+          }
         />
       </div>
     );
@@ -46,7 +50,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changeFilter: (filter: any) => dispatch(actions.changeFilter(filter))
+    changeFilter: (filter: any) => dispatch(actions.changeFilter(filter)),
   };
 }
 

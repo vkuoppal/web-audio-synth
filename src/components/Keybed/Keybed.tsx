@@ -1,9 +1,3 @@
-/**
- *
- * Keybed.tsx
- *
- */
-
 import * as React from "react";
 import { Key } from "../Key/Key";
 
@@ -11,18 +5,18 @@ import "./style.scss";
 
 export type Note = {
   note:
-  | "C"
-  | "C#"
-  | "D"
-  | "D#"
-  | "E"
-  | "F"
-  | "F#"
-  | "G"
-  | "G#"
-  | "A"
-  | "A#"
-  | "B";
+    | "C"
+    | "C#"
+    | "D"
+    | "D#"
+    | "E"
+    | "F"
+    | "F#"
+    | "G"
+    | "G#"
+    | "A"
+    | "A#"
+    | "B";
   octave: number;
 };
 
@@ -38,14 +32,14 @@ export const noteMap = new Map([
   [8, "G#"],
   [9, "A"],
   [10, "A#"],
-  [11, "B"]
+  [11, "B"],
 ]);
 
 function resolveNote(index: number): Note {
   return {
     note: noteMap.get(index % 12),
     // Keybed starts from octave 2
-    octave: Math.floor(index / 12) + 2
+    octave: Math.floor(index / 12) + 2,
   } as Note;
 }
 

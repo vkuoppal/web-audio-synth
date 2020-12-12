@@ -10,7 +10,7 @@ import { store } from "./state/index";
 import { connectExternalMidiDevice } from "./midi/midi-api";
 
 // Prevent context menu event
-document.addEventListener("contextmenu", event => event.preventDefault());
+document.addEventListener("contextmenu", (event) => event.preventDefault());
 
 // Prevent default touch gestures
 document.addEventListener(
@@ -21,7 +21,7 @@ document.addEventListener(
     }
   },
   {
-    passive: false
+    passive: false,
   }
 );
 

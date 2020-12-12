@@ -13,7 +13,6 @@ export class OctaveChanger extends React.Component<OctaveChangerProps> {
     super(props);
   }
 
-
   render() {
     const activeOctave = `octave-${this.props.activeOctave}-active`;
     const containerClassName = `octave-changer-container ${activeOctave}`;
@@ -21,7 +20,8 @@ export class OctaveChanger extends React.Component<OctaveChangerProps> {
       <div
         className={containerClassName}
         onTouchStart={() => {
-          const newOctave = this.props.activeOctave < 4 ? this.props.activeOctave + 1 : 1
+          const newOctave =
+            this.props.activeOctave < 4 ? this.props.activeOctave + 1 : 1;
           this.props.onOctaveChanged(newOctave);
         }}
       >

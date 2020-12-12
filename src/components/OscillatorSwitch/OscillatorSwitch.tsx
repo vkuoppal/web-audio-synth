@@ -12,7 +12,7 @@ export enum Waveform {
   Triangle = "triangle",
   Sine = "sine",
   Sawtooth = "saw",
-  Custom = "custom"
+  Custom = "custom",
 }
 
 export interface OscillatorSwitchProps {
@@ -20,10 +20,7 @@ export interface OscillatorSwitchProps {
   onSelectionChanged: (waveform: Waveform) => void;
 }
 
-
-export class OscillatorSwitch extends React.Component<
-  OscillatorSwitchProps
-  > {
+export class OscillatorSwitch extends React.Component<OscillatorSwitchProps> {
   changeWaveform = () => {
     const { selectedWaveform } = this.props;
 

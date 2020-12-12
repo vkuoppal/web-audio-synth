@@ -7,6 +7,6 @@ export interface ParamTextProps {
 }
 
 export const ParamText = (props: ParamTextProps) => {
-  const className = `param-text${props.header ? " header" : ""}`
+  const className = `param-text${props.header ? " header" : ""}`;
   return <span className={className}>{props.text}</span>;
 };

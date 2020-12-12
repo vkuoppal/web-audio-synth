@@ -4,9 +4,16 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { actions } from "../../state";
 import { Knob } from "../../components/Knob/Knob";
-import { OscillatorSwitch, Waveform } from "../../components/OscillatorSwitch/OscillatorSwitch";
+import {
+  OscillatorSwitch,
+  Waveform,
+} from "../../components/OscillatorSwitch/OscillatorSwitch";
 import { OctaveChanger } from "../../components/OctaveChanger/OctaveChanger";
-import { getOscillatorVolume, getOscillatorOctave, getOscillatorType } from "../../state/selectors";
+import {
+  getOscillatorVolume,
+  getOscillatorOctave,
+  getOscillatorType,
+} from "../../state/selectors";
 
 export interface OscillatorMixerRowProps {
   oscillatorId: string;
@@ -29,20 +36,32 @@ class ConnectedOscillatorMixerRow extends React.Component<OscillatorMixerRowProp
       <div className="oscillator-mixer-row">
         <div className="oscillator-switch-and-octave">
           <OscillatorSwitch
-            onSelectionChanged={(waveform: Waveform) => this.props.changeOscillatorType(waveform, this.props.oscillatorId)}
-            selectedWaveform={this.props.oscillatorType} />
-          <OctaveChanger oscillatorId={this.props.oscillatorId} onOctaveChanged={(octave: number) => this.props.changeOctave(octave, this.props.oscillatorId)} activeOctave={this.props.octave} />
+            onSelectionChanged={(waveform: Waveform) =>
+              this.props.changeOscillatorType(waveform, this.props.oscillatorId)
+            }
+            selectedWaveform={this.props.oscillatorType}
+          />
+          <OctaveChanger
+            oscillatorId={this.props.oscillatorId}
+            onOctaveChanged={(octave: number) =>
+              this.props.changeOctave(octave, this.props.oscillatorId)
+            }
+            activeOctave={this.props.octave}
+          />
         </div>
 
         <Knob
           name={name}
           showName={false}
           value={this.props.volume}
-          onValueChanged={volume => this.props.changeVolume(volume, this.props.oscillatorId)}
+          onValueChanged={(volume) =>
+            this.props.changeVolume(volume, this.props.oscillatorId)
+          }
         />
       </div>
     );
-  } x
+  }
+  x;
 }
 
 function mapStateToProps(state, ownProps) {
@@ -55,9 +74,14 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch: Function) {
   return {
-    changeVolume: (volume: number, oscillatorId: string) => dispatch(actions.changeOscillatorVolume({ volume, oscillatorId })),
-    changeOctave: (octave: number, oscillatorId: string) => dispatch(actions.changeOscillatorOctave({ octave, oscillatorId })),
-    changeOscillatorType: (waveform: Waveform, oscillatorId: string) => dispatch(actions.changeOscillatorType({ oscillatorType: waveform, oscillatorId }))
+    changeVolume: (volume: number, oscillatorId: string) =>
+      dispatch(actions.changeOscillatorVolume({ volume, oscillatorId })),
+    changeOctave: (octave: number, oscillatorId: string) =>
+      dispatch(actions.changeOscillatorOctave({ octave, oscillatorId })),
+    changeOscillatorType: (waveform: Waveform, oscillatorId: string) =>
+      dispatch(
+        actions.changeOscillatorType({ oscillatorType: waveform, oscillatorId })
+      ),
   };
 }
 
