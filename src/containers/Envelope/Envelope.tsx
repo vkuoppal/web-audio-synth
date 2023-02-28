@@ -14,66 +14,61 @@ export interface EnvelopeProps {
   release: number;
 }
 
-class ConnectedEnvelope extends React.Component<EnvelopeProps> {
-  constructor(props: EnvelopeProps) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div className="envelope-container">
-        <Knob
-          name="attack"
-          value={this.props.attack}
-          onValueChanged={(attack: number) =>
-            this.props.changeAdsr({
-              attack,
-              decay: this.props.decay,
-              sustain: this.props.sustain,
-              release: this.props.release,
-            })
-          }
-        />
-        <Knob
-          name="decay"
-          value={this.props.decay}
-          onValueChanged={(decay: number) =>
-            this.props.changeAdsr({
-              attack: this.props.attack,
-              decay,
-              sustain: this.props.sustain,
-              release: this.props.release,
-            })
-          }
-        />
-        <Knob
-          name="sustain"
-          value={this.props.sustain}
-          onValueChanged={(sustain: number) =>
-            this.props.changeAdsr({
-              attack: this.props.attack,
-              decay: this.props.decay,
-              sustain,
-              release: this.props.release,
-            })
-          }
-        />
-        <Knob
-          name="release"
-          value={this.props.release}
-          onValueChanged={(release: number) =>
-            this.props.changeAdsr({
-              attack: this.props.attack,
-              decay: this.props.decay,
-              sustain: this.props.sustain,
-              release,
-            })
-          }
-        />
-      </div>
-    );
-  }
-}
+const ConnectedEnvelope: React.FC<EnvelopeProps> = (props: EnvelopeProps) => {
+  const { attack, decay, sustain, release } = props;
+  return (
+    <div className="envelope-container">
+      <Knob
+        name="attack"
+        value={attack}
+        onValueChanged={(changedAttack: number) =>
+          props.changeAdsr({
+            attack: changedAttack,
+            decay,
+            sustain,
+            release,
+          })
+        }
+      />
+      <Knob
+        name="decay"
+        value={decay}
+        onValueChanged={(changedDecay: number) =>
+          props.changeAdsr({
+            attack,
+            decay: changedDecay,
+            sustain,
+            release,
+          })
+        }
+      />
+      <Knob
+        name="sustain"
+        value={sustain}
+        onValueChanged={(changedSustain: number) =>
+          props.changeAdsr({
+            attack,
+            decay,
+            sustain: changedSustain,
+            release,
+          })
+        }
+      />
+      <Knob
+        name="release"
+        value={release}
+        onValueChanged={(changedRelease: number) =>
+          props.changeAdsr({
+            attack,
+            decay,
+            sustain,
+            release: changedRelease,
+          })
+        }
+      />
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return getAdsr(state);

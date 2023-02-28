@@ -8,6 +8,7 @@ export const initialState = {
   activeNotes: new Set(),
   selectedPreset: 1,
   knobs: {},
+  lfoValue: 0,
 } as State;
 
 export interface State {
@@ -20,6 +21,8 @@ export interface State {
   };
   filter: { cutoff: number; resonance: number };
   lfo: { speed: number; intensity: number; type: Waveform };
+  lfoValue: number;
+  lfoDirection: "up" | "down"
   noteModulator: { [note: string]: { [modulator: string]: number } } | {};
   oscillator: {
     [oscillatorId: string]: { type: Waveform; volume: number; octave: number };
@@ -34,6 +37,7 @@ export interface State {
     [connectionId: string]: {
       position: { x: number; y: number };
       startPoint: { x: number; y: number };
+      connectedTo: string;
     };
   };
   knobs: {
@@ -117,12 +121,15 @@ export const applicationSlice = createSlice({
     changeGain(state, action: PayloadAction<number>) {
       state.gainValue = action.payload;
     },
+
     changeAdsr(state, action: PayloadAction<AdsrPayloadAction>) {
       state.adsrValue = action.payload;
     },
+
     changeFilter(state, action: PayloadAction<FilterPayloadAction>) {
       state.filter = action.payload;
     },
+
     changeOscillatorType(
       state,
       action: PayloadAction<ChangeOscillatorPayloadAction>
@@ -130,6 +137,7 @@ export const applicationSlice = createSlice({
       state.oscillator[action.payload.oscillatorId].type =
         action.payload.oscillatorType;
     },
+
     changeOscillatorVolume(
       state,
       action: PayloadAction<ChangeOscillatorVolumePayloadAction>
@@ -137,6 +145,7 @@ export const applicationSlice = createSlice({
       state.oscillator[action.payload.oscillatorId].volume =
         action.payload.volume;
     },
+
     changeOscillatorOctave(
       state,
       action: PayloadAction<ChangeOscillatorOctavePayloadAction>
@@ -144,25 +153,31 @@ export const applicationSlice = createSlice({
       state.oscillator[action.payload.oscillatorId].octave =
         action.payload.octave;
     },
+
     activateNote(state, action: PayloadAction<string>) {
       const newSet = new Set(state.activeNotes);
       newSet.add(action.payload);
       state.activeNotes = newSet;
     },
+
     deactivateNote(state, action: PayloadAction<string>) {
       const newSet = new Set(state.activeNotes);
       newSet.delete(action.payload);
       state.activeNotes = newSet;
     },
+
     toggleDelayActive(state) {
       state.delayActive = !state.delayActive;
     },
+
     changeDelayFeedback(state, action: PayloadAction<number>) {
       state.delayFeedback = action.payload;
     },
+
     changeDelayTime(state, action: PayloadAction<number>) {
       state.delayTime = action.payload;
     },
+
     changePreset(state, action: PayloadAction<number>) {
       const prevActiveNotes = new Set(state.activeNotes);
       const presetToSelect = action.payload > 5 ? 1 : action.payload;
@@ -175,6 +190,7 @@ export const applicationSlice = createSlice({
       state = newState;
       return state;
     },
+
     randomizeAll(state) {
       const prevActiveNotes = new Set(state.activeNotes);
       const presetToSelect = 99;
@@ -193,9 +209,11 @@ export const applicationSlice = createSlice({
       state = newState;
       return state;
     },
+
     randomized(state) {
       state.randomizing = false;
     },
+
     changeNoteModulator(
       state,
       action: PayloadAction<ChangeNoteModulatorPayload>
@@ -215,6 +233,7 @@ export const applicationSlice = createSlice({
         };
       }
     },
+
     stopNoteModulator(state, action: PayloadAction<StopNoteModulatorPayload>) {
       const earlierModulator =
         state.noteModulator && state.noteModulator[action.payload.note];
@@ -222,6 +241,67 @@ export const applicationSlice = createSlice({
         state.noteModulator[action.payload.note] = {};
       }
     },
+
+    /**
+     * Trigger LFOs
+     * Calculate LFO value between -63 -> 63
+     * Knobs should be adjusted based on the knobs' initial values
+     */
+    triggerLfos(state, _action: PayloadAction) {
+      const { intensity, type } = state.lfo;
+
+      switch(type) {
+        case Waveform.Sawtooth:
+          state.lfoDirection = "up"  
+          if (state.lfoValue > 126) {
+            state.lfoValue = 0;
+          } else {
+            state.lfoValue += 1;
+          }
+          break;
+        case Waveform.Sine:  
+          if (state.lfoValue > 126) {
+            state.lfoDirection = "down"  
+          } else if (state.lfoValue < 1) {
+            state.lfoDirection = "up"
+           
+          }
+
+          if(state.lfoDirection === "up") {
+            state.lfoValue += 1;
+          } else {
+            state.lfoValue -=1;
+          }
+          break;
+        case Waveform.Square:  
+          if(state.lfoValue < 126.4 && state.lfoValue > 0.6) {
+            state.lfoValue = 127;
+          }
+
+          if (state.lfoValue > 127) {
+            state.lfoDirection = "up";
+            state.lfoValue = 0.5;  
+          } else if (state.lfoValue < 0) {
+            state.lfoDirection = "down"
+            state.lfoValue = 126.5;
+          }
+
+          if(state.lfoDirection === "up") {
+            state.lfoValue += 0.1; 
+          } else {
+            state.lfoValue -= 0.1;
+          }
+          break;
+      }
+
+      Object.entries(state.connection).forEach((entry) => {
+        const [key, connection] = entry;
+        if (connection.connectedTo) {
+          state.filter.cutoff = state.lfoValue;
+        }
+      });
+    },
+
     changeLfoSpeed(state, action: PayloadAction<ChangeLfoSpeedPayload>) {
       state.lfo.speed = action.payload.lfoSpeed;
     },
@@ -253,6 +333,7 @@ export const applicationSlice = createSlice({
 
           if (yDistance < 32 && xDistance < 32) {
             endPointCoordinates = origo;
+            state.connection[action.payload.connectionId].connectedTo = key;
           }
         }
       });

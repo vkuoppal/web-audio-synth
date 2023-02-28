@@ -17,32 +17,26 @@ export interface FilterState {
   resonance: number;
 }
 
-export class ConnectedFilter extends React.Component<FilterProps> {
-  constructor(props: FilterProps) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div className="filter-container">
-        <Knob
-          name="cutoff"
-          value={this.props.cutoff}
-          onValueChanged={(cutoff: number) =>
-            this.props.changeFilter({ cutoff, resonance: this.props.resonance })
-          }
-        />
-        <Knob
-          name="resonance"
-          value={this.props.resonance}
-          onValueChanged={(resonance: number) =>
-            this.props.changeFilter({ cutoff: this.props.cutoff, resonance })
-          }
-        />
-      </div>
-    );
-  }
-}
+const ConnectedFilter: React.FC<FilterProps> = (props: FilterProps) => {
+  return (
+    <div className="filter-container">
+      <Knob
+        name="cutoff"
+        value={props.cutoff}
+        onValueChanged={(cutoff: number) =>
+          props.changeFilter({ cutoff, resonance: props.resonance })
+        }
+      />
+      <Knob
+        name="resonance"
+        value={props.resonance}
+        onValueChanged={(resonance: number) =>
+          props.changeFilter({ cutoff: props.cutoff, resonance })
+        }
+      />
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return getFilter(state);

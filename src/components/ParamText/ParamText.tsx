@@ -6,7 +6,7 @@ export interface ParamTextProps {
   header?: boolean;
 }
 
-export const ParamText = (props: ParamTextProps) => {
+export const ParamText: React.FC<ParamTextProps> = (props: ParamTextProps) => {
   const className = `param-text${props.header ? " header" : ""}`;
   return <span className={className}>{props.text}</span>;
 };

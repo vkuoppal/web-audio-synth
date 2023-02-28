@@ -12,7 +12,7 @@ export enum Waveform {
   Triangle = "triangle",
   Sine = "sine",
   Sawtooth = "saw",
-  Custom = "custom",
+  Random = "random",
 }
 
 export interface OscillatorSwitchProps {
@@ -20,32 +20,25 @@ export interface OscillatorSwitchProps {
   onSelectionChanged: (waveform: Waveform) => void;
 }
 
-export class OscillatorSwitch extends React.Component<OscillatorSwitchProps> {
-  changeWaveform = () => {
-    const { selectedWaveform } = this.props;
+export const OscillatorSwitch: React.FC<OscillatorSwitchProps> = (
+  props: OscillatorSwitchProps
+) => {
+  const changeWaveform = () => {
+    const { selectedWaveform } = props;
 
     if (selectedWaveform === Waveform.Sine) {
-      this.props.onSelectionChanged(Waveform.Triangle);
+      props.onSelectionChanged(Waveform.Triangle);
     } else if (selectedWaveform === Waveform.Triangle) {
-      this.props.onSelectionChanged(Waveform.Square);
+      props.onSelectionChanged(Waveform.Square);
     } else if (selectedWaveform === Waveform.Square) {
-      this.props.onSelectionChanged(Waveform.Sawtooth);
+      props.onSelectionChanged(Waveform.Sawtooth);
     } else if (selectedWaveform === Waveform.Sawtooth) {
-      this.props.onSelectionChanged(Waveform.Sine);
+      props.onSelectionChanged(Waveform.Sine);
     }
   };
 
-  render() {
-    const waveFormComponent = this.renderWaveform();
-    return (
-      <div className="oscillator-switch" onTouchStart={this.changeWaveform}>
-        {waveFormComponent}
-      </div>
-    );
-  }
-
-  private renderWaveform() {
-    switch (this.props.selectedWaveform) {
+  const getWaveformIcon = () => {
+    switch (props.selectedWaveform) {
       case Waveform.Sawtooth:
         return <SawtoothIcon />;
       case Waveform.Triangle:
@@ -54,8 +47,17 @@ export class OscillatorSwitch extends React.Component<OscillatorSwitchProps> {
         return <SquareIcon />;
       case Waveform.Sine:
         return <SineIcon />;
+      case Waveform.Random:
+        return <div>moi<SineIcon /></div>;
       default:
         return null;
     }
-  }
-}
+  };
+
+  const waveFormIcon = getWaveformIcon();
+  return (
+    <div className="oscillator-switch" onTouchStart={changeWaveform}>
+      {waveFormIcon}
+    </div>
+  );
+};

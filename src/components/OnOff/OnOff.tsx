@@ -7,7 +7,7 @@ export interface OnOffProps {
   toggle: () => void;
 }
 
-export const OnOff = (props: OnOffProps) => {
+export const OnOff: React.FC<OnOffProps> = (props: OnOffProps) => {
   const paramText = props.isOn ? "on" : "off";
   const onIndicatorClassName = `on-indicator ${paramText}`;
 

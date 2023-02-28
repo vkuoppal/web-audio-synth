@@ -6,7 +6,9 @@ export interface SevenSegmentNumberProps {
   number: number | undefined;
 }
 
-export const SevenSegmentNumber = (props: SevenSegmentNumberProps) => {
+export const SevenSegmentNumber: React.FC<SevenSegmentNumberProps> = (
+  props: SevenSegmentNumberProps
+) => {
   const n = props.number;
 
   const aClassName = n !== undefined && n !== 1 && n !== 4 ? "a active" : "a";

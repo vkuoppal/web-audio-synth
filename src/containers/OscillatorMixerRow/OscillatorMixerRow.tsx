@@ -25,44 +25,39 @@ export interface OscillatorMixerRowProps {
   oscillatorType: Waveform;
 }
 
-class ConnectedOscillatorMixerRow extends React.Component<OscillatorMixerRowProps> {
-  constructor(props: OscillatorMixerRowProps) {
-    super(props);
-  }
-
-  render() {
-    const name = `OSC${this.props.oscillatorId}`;
-    return (
-      <div className="oscillator-mixer-row">
-        <div className="oscillator-switch-and-octave">
-          <OscillatorSwitch
-            onSelectionChanged={(waveform: Waveform) =>
-              this.props.changeOscillatorType(waveform, this.props.oscillatorId)
-            }
-            selectedWaveform={this.props.oscillatorType}
-          />
-          <OctaveChanger
-            oscillatorId={this.props.oscillatorId}
-            onOctaveChanged={(octave: number) =>
-              this.props.changeOctave(octave, this.props.oscillatorId)
-            }
-            activeOctave={this.props.octave}
-          />
-        </div>
-
-        <Knob
-          name={name}
-          showName={false}
-          value={this.props.volume}
-          onValueChanged={(volume) =>
-            this.props.changeVolume(volume, this.props.oscillatorId)
+const ConnectedOscillatorMixerRow: React.FC<OscillatorMixerRowProps> = (
+  props: OscillatorMixerRowProps
+) => {
+  const name = `OSC${props.oscillatorId}`;
+  return (
+    <div className="oscillator-mixer-row">
+      <div className="oscillator-switch-and-octave">
+        <OscillatorSwitch
+          onSelectionChanged={(waveform: Waveform) =>
+            props.changeOscillatorType(waveform, props.oscillatorId)
           }
+          selectedWaveform={props.oscillatorType}
+        />
+        <OctaveChanger
+          oscillatorId={props.oscillatorId}
+          onOctaveChanged={(octave: number) =>
+            props.changeOctave(octave, props.oscillatorId)
+          }
+          activeOctave={props.octave}
         />
       </div>
-    );
-  }
-  x;
-}
+
+      <Knob
+        name={name}
+        showName={false}
+        value={props.volume}
+        onValueChanged={(volume) =>
+          props.changeVolume(volume, props.oscillatorId)
+        }
+      />
+    </div>
+  );
+};
 
 function mapStateToProps(state, ownProps) {
   return {

@@ -11,14 +11,15 @@ import {
 } from "../../state/selectors";
 import { Knob } from "../../components/Knob/Knob";
 import { ConnectionPoint } from "../../components/ConnectionPoint/ConnectionPoint";
-import { ParamText } from "../../components/ParamText/ParamText";
 import {
   Waveform,
   OscillatorSwitch,
 } from "../../components/OscillatorSwitch/OscillatorSwitch";
 import { ConnectionWire } from "../../components/ConnectionWire/ConnectionWire";
+import { ParamText } from "../../components/ParamText/ParamText";
 
 export interface LfoProps {
+  triggerLfos: () => void;
   changeLfoIntensity: (lfoIntensity: number) => void;
   changeLfoSpeed: (lfoSpeed: number) => void;
   changeLfoType: (lfoType: Waveform) => void;
@@ -30,103 +31,89 @@ export interface LfoProps {
   lfoEndConnectionPoints: { [lfoEndId: string]: { x: number; y: number } };
 }
 
-class ConnectedLfo extends React.Component<LfoProps> {
-  private lfoType;
-  private lfoSpeed;
-  private lfoIntensity;
-  private lfoTimer;
+const ConnectedLfo: React.FC<LfoProps> = (props: LfoProps) => {
+  React.useEffect(() => {
+    const intervalTimeout = 128 - props.speed;
 
-  constructor(props: LfoProps) {
-    super(props);
-    this.lfoType = props.lfoType;
-    this.lfoSpeed = props.speed;
-    this.lfoIntensity = props.intensity;
+    const interval = window.setInterval(() => {
+      props.triggerLfos();
+    }, intervalTimeout);
+    return () => window.clearInterval(interval);
+  }, [props.speed]);
 
-    this.lfoTimer = setInterval(() => {}, 10);
-  }
-
-  render() {
-    return (
-      <div className="lfo-block">
-        <div className="lfo-header">
-          <ParamText text="lfo" header={true} />
-          <OscillatorSwitch
-            selectedWaveform={this.props.lfoType}
-            onSelectionChanged={(value) => this.props.changeLfoType(value)}
-          />
-        </div>
-        <div className="lfo-knobs">
-          <Knob
-            name="intensity"
-            value={this.props.intensity}
-            onValueChanged={(value) => this.props.changeLfoIntensity(value)}
-          />
-          <Knob
-            name="speed"
-            value={this.props.speed}
-            onValueChanged={(value) => this.props.changeLfoSpeed(value)}
-          />
-        </div>
-        <div className="lfo-connection-points">
-          <ConnectionPoint
-            connectionId="lfo1"
-            startConnection={(x, y) =>
-              this.props.setConnectionStart("lfo1", x, y)
-            }
-            moveConnection={(x, y) => this.props.moveConnection("lfo1", x, y)}
-          />
-          <ConnectionWire connectionId="lfo1" />
-          <ConnectionPoint
-            connectionId="lfo1End"
-            forcedPosition={this.props.lfoEndConnectionPoints["lfo1End"]}
-          />
-
-          <ConnectionPoint
-            connectionId="lfo2"
-            startConnection={(x, y) =>
-              this.props.setConnectionStart("lfo2", x, y)
-            }
-            moveConnection={(x, y) => this.props.moveConnection("lfo2", x, y)}
-          />
-          <ConnectionWire connectionId="lfo2" />
-          <ConnectionPoint
-            connectionId="lfo2End"
-            forcedPosition={this.props.lfoEndConnectionPoints["lfo2End"]}
-          />
-
-          <ConnectionPoint
-            connectionId="lfo3"
-            startConnection={(x, y) =>
-              this.props.setConnectionStart("lfo3", x, y)
-            }
-            moveConnection={(x, y) => this.props.moveConnection("lfo3", x, y)}
-          />
-          <ConnectionWire connectionId="lfo3" />
-          <ConnectionPoint
-            connectionId="lfo3End"
-            forcedPosition={this.props.lfoEndConnectionPoints["lfo3End"]}
-          />
-
-          <ConnectionPoint
-            connectionId="lfo4"
-            startConnection={(x, y) =>
-              this.props.setConnectionStart("lfo4", x, y)
-            }
-            moveConnection={(x, y) => this.props.moveConnection("lfo4", x, y)}
-          />
-          <ConnectionWire connectionId="lfo4" />
-          <ConnectionPoint
-            connectionId="lfo4End"
-            forcedPosition={this.props.lfoEndConnectionPoints["lfo4End"]}
-          />
-        </div>
+  return (
+    <div className="lfo-block">
+      <div className="lfo-header">
+        <ParamText text="lfo" header={true} />
+        <OscillatorSwitch
+          selectedWaveform={props.lfoType}
+          onSelectionChanged={(value) => props.changeLfoType(value)}
+        />
       </div>
-    );
-  }
-}
+      <div className="lfo-knobs">
+        <Knob
+          name="intensity"
+          value={props.intensity}
+          onValueChanged={(value) => props.changeLfoIntensity(value)}
+        />
+        <Knob
+          name="speed"
+          value={props.speed}
+          onValueChanged={(value) => props.changeLfoSpeed(value)}
+        />
+      </div>
+      <div className="lfo-connection-points">
+        <ConnectionPoint
+          connectionId="lfo1"
+          startConnection={(x, y) => props.setConnectionStart("lfo1", x, y)}
+          moveConnection={(x, y) => props.moveConnection("lfo1", x, y)}
+        />
+        <ConnectionWire connectionId="lfo1" />
+        <ConnectionPoint
+          connectionId="lfo1End"
+          forcedPosition={props.lfoEndConnectionPoints["lfo1End"]}
+        />
+
+        <ConnectionPoint
+          connectionId="lfo2"
+          startConnection={(x, y) => props.setConnectionStart("lfo2", x, y)}
+          moveConnection={(x, y) => props.moveConnection("lfo2", x, y)}
+        />
+        <ConnectionWire connectionId="lfo2" />
+        <ConnectionPoint
+          connectionId="lfo2End"
+          forcedPosition={props.lfoEndConnectionPoints["lfo2End"]}
+        />
+
+        <ConnectionPoint
+          connectionId="lfo3"
+          startConnection={(x, y) => props.setConnectionStart("lfo3", x, y)}
+          moveConnection={(x, y) => props.moveConnection("lfo3", x, y)}
+        />
+        <ConnectionWire connectionId="lfo3" />
+        <ConnectionPoint
+          connectionId="lfo3End"
+          forcedPosition={props.lfoEndConnectionPoints["lfo3End"]}
+        />
+
+        <ConnectionPoint
+          connectionId="lfo4"
+          startConnection={(x, y) => props.setConnectionStart("lfo4", x, y)}
+          moveConnection={(x, y) => props.moveConnection("lfo4", x, y)}
+        />
+        <ConnectionWire connectionId="lfo4" />
+        <ConnectionPoint
+          connectionId="lfo4End"
+          forcedPosition={props.lfoEndConnectionPoints["lfo4End"]}
+        />
+      </div>
+    </div>
+  );
+};
 
 function mapDispatchToProps(dispatch: Function) {
   return {
+    triggerLfos: () => dispatch(actions.triggerLfos()),
     changeLfoSpeed: (speed: number) =>
       dispatch(actions.changeLfoSpeed({ lfoSpeed: speed })),
     changeLfoIntensity: (intensity: number) =>

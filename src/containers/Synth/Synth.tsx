@@ -14,6 +14,11 @@ import { connect } from "react-redux";
 import "./style.scss";
 import { OscillatorMixerRow } from "../OscillatorMixerRow/OscillatorMixerRow";
 
+export interface SynthProps {
+  randomizing: boolean | undefined;
+  randomized: () => void;
+}
+
 enum KeyPressDirection {
   Up = "up",
   Down = "down",
@@ -90,52 +95,50 @@ function onKeyPress(
   }
 }
 
-class ConnectedSynth extends React.Component<any, any> {
-  private synthRef = React.createRef<HTMLDivElement>();
-
-  componentDidMount() {
-    if (this.synthRef.current) {
-      this.synthRef.current.focus();
+const ConnectedSynth: React.FC<SynthProps> = (props: SynthProps) => {
+  const synthRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (synthRef.current) {
+      synthRef.current.focus();
     }
+  }, []);
+
+  const className = props.randomizing
+    ? "synth-container randomizing"
+    : "synth-container";
+  if (props.randomizing) {
+    window.setTimeout(() => props.randomized(), 1000);
   }
 
-  render() {
-    const className = this.props.randomizing
-      ? "synth-container randomizing"
-      : "synth-container";
-    if (this.props.randomizing) {
-      window.setTimeout(() => this.props.randomized(), 1000);
-    }
-    return (
-      <div
-        ref={this.synthRef}
-        className={className}
-        tabIndex={0}
-        onKeyDown={(event) => onKeyPress(event, KeyPressDirection.Down)}
-        onKeyUp={(event) => onKeyPress(event, KeyPressDirection.Up)}
-      >
-        <div className="main-panel">
-          <div className="oscillator-mixer">
-            <OscillatorMixerRow oscillatorId={1} />
-            <OscillatorMixerRow oscillatorId={2} />
-            <OscillatorMixerRow oscillatorId={3} />
-            <OscillatorMixerRow oscillatorId={4} />
-          </div>
+  return (
+    <div
+      ref={synthRef}
+      className={className}
+      tabIndex={0}
+      onKeyDown={(event) => onKeyPress(event, KeyPressDirection.Down)}
+      onKeyUp={(event) => onKeyPress(event, KeyPressDirection.Up)}
+    >
+      <div className="main-panel">
+        <div className="oscillator-mixer">
+          <OscillatorMixerRow oscillatorId={1} />
+          <OscillatorMixerRow oscillatorId={2} />
+          <OscillatorMixerRow oscillatorId={3} />
+          <OscillatorMixerRow oscillatorId={4} />
+        </div>
 
-          <Filter />
-          <PresetChanger />
-          <Lfo />
-          <Envelope />
-          <Delay />
-        </div>
-        <div className="bottom-divider" />
-        <div className="keybed-container">
-          <Keybed />
-        </div>
+        <Filter />
+        <PresetChanger />
+        <Lfo />
+        <Envelope />
+        <Delay />
       </div>
-    );
-  }
-}
+      <div className="bottom-divider" />
+      <div className="keybed-container">
+        <Keybed />
+      </div>
+    </div>
+  );
+};
 
 function mapStateToProps(state: any) {
   return {

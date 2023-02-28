@@ -21,34 +21,28 @@ export interface DelayProps {
   delayFeedback: number;
 }
 
-class ConnectedDelay extends React.Component<DelayProps> {
-  constructor(props: any) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div className="delay-block">
-        <div className="delay-header">
-          <ParamText text="delay" header={true} />
-          <OnOff isOn={this.props.active} toggle={this.props.toggleDelay} />
-        </div>
-        <div className="delay-knobs">
-          <Knob
-            name="time"
-            value={this.props.delayTime}
-            onValueChanged={(value) => this.props.changeTime(value)}
-          />
-          <Knob
-            name="feedback"
-            value={this.props.delayFeedback}
-            onValueChanged={(value) => this.props.changeFeedback(value)}
-          />
-        </div>
+const ConnectedDelay: React.FC<DelayProps> = (props: DelayProps) => {
+  return (
+    <div className="delay-block">
+      <div className="delay-header">
+        <ParamText text="delay" header={true} />
+        <OnOff isOn={props.active} toggle={props.toggleDelay} />
       </div>
-    );
-  }
-}
+      <div className="delay-knobs">
+        <Knob
+          name="time"
+          value={props.delayTime}
+          onValueChanged={(value) => props.changeTime(value)}
+        />
+        <Knob
+          name="feedback"
+          value={props.delayFeedback}
+          onValueChanged={(value) => props.changeFeedback(value)}
+        />
+      </div>
+    </div>
+  );
+};
 
 function mapDispatchToProps(dispatch: Function) {
   return {

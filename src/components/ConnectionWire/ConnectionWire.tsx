@@ -22,7 +22,8 @@ const Path = (props: {
   />
 );
 
-export type ConnectionWire = ConnectionWireOwnProps & ConnectionWireStateProps;
+export type ConnectionWireProps = ConnectionWireOwnProps &
+  ConnectionWireStateProps;
 
 export interface ConnectionWireOwnProps {
   connectionId: string;
@@ -34,8 +35,10 @@ export interface ConnectionWireStateProps {
   endPoint: { x: number; y: number };
 }
 
-export const ConnectedConnectionWire = (props: ConnectionWire) => {
-  return (
+export const ConnectedConnectionWire: React.FC<ConnectionWireProps> = (
+  props: ConnectionWireProps
+) => {
+  return props.startPoint.x === 0 ? null : (
     <div className="connection-wire-container">
       <svg className="connection-wire">
         <Path
@@ -47,8 +50,6 @@ export const ConnectedConnectionWire = (props: ConnectionWire) => {
     </div>
   );
 };
-
-function mapDispatchToProps() {}
 
 function mapStateToProps(state: any, ownProps: ConnectionWireOwnProps) {
   let endPointCoordinates = getConnectionEndPosition(
@@ -73,7 +74,4 @@ function mapStateToProps(state: any, ownProps: ConnectionWireOwnProps) {
   };
 }
 
-export const ConnectionWire = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedConnectionWire);
+export const ConnectionWire = connect(mapStateToProps)(ConnectedConnectionWire);

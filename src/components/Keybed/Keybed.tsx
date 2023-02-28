@@ -43,7 +43,7 @@ function resolveNote(index: number): Note {
   } as Note;
 }
 
-export const Keybed = () => {
+export const Keybed: React.FC = () => {
   let keys: Array<Note> = [];
   for (let i = 0; i < 36; ++i) {
     keys.push(resolveNote(i));

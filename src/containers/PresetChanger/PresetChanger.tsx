@@ -14,10 +14,6 @@ export interface PresetChangerProps {
 }
 
 export class ConnectedPresetChanger extends React.Component<PresetChangerProps> {
-  constructor(props: PresetChangerProps) {
-    super(props);
-  }
-
   private longPressTimeout;
 
   render() {
